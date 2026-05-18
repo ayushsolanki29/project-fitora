@@ -1,0 +1,133 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="card-title mb-1">Upcoming Deliveries</h4>
+            <p class="text-muted mb-0">Orders sorted by nearest deadline</p>
+          </div>
+          <span class="badge bg-primary">
+            {{ upcoming_orders|length }} Orders
+          </span>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead class="table-light">
+              <tr>
+                <th>Customer</th>
+                <th>Item</th>
+                <th>Delivery Date</th>
+                <th>Time Left</th>
+                <th>Progress</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for order in upcoming_orders %}
+              <tr>
+
+                <!-- Customer -->
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      src="{% if order.customer.profile_pic %}{{ order.customer.profile_pic.url }}{% else %}{% static 'admin/images/faces/face1.jpg' %}{% endif %}"
+                      class="rounded-circle"
+                      width="35"
+                      height="35"
+                      alt="customer"
+                    >
+                    <div>
+                      <div class="fw-semibold">
+                        {{ order.customer.get_full_name }}
+                      </div>
+                      <small class="text-muted">
+                        {{ order.customer.phone_number|default:"No phone" }}
+                      </small>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Item -->
+                <td>
+                  <span class="fw-semibold">{{ order.garment_type }}</span>
+                  <br>
+                  <small class="text-muted">Order #ORD-{{ order.id }}</small>
+                </td>
+
+                <!-- Delivery Date -->
+                <td>
+                  <span class="fw-semibold">
+                    {{ order.delivery_date|date:"d M Y" }}
+                  </span>
+                </td>
+
+                <!-- Time Remaining -->
+                <td>
+                  {% if order.is_overdue %}
+                    <span class="badge bg-danger">OVERDUE</span>
+                  {% else %}
+                    <span class="badge bg-primary">
+                      {{ order.delivery_date|timeuntil }}
+                    </span>
+                  {% endif %}
+                </td>
+
+                <!-- Progress -->
+                <td style="width: 180px;">
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-success">
+                    </div>
+                  </div>
+                  <small class="text-muted">
+                    {{ order.completion_pct|default:0 }}% done
+                  </small>
+                </td>
+
+                <!-- Action -->
+                <td class="text-end">
+                  <a href="{% url 'tailor:order_detail' order.id %}"
+                     class="btn btn-sm btn-outline-primary">
+                    View
+                  </a>
+
+                  <a href="{% url 'tailor:update_order' order.id %}"
+                     class="btn btn-sm btn-primary">
+                    Update
+                  </a>
+                </td>
+
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  <i class="mdi mdi-calendar-remove mdi-24px"></i><br>
+                  No upcoming deliveries scheduled.
+                </td>
+              </tr>
+              {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

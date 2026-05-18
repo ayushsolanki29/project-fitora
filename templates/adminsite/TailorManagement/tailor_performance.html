@@ -1,0 +1,182 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-12">
+    <h4>Advanced Tailor Performance Dashboard</h4>
+  </div>
+</div>
+
+<!-- 📊 CHART -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h5>Monthly Orders Overview</h5>
+    <canvas id="orderChart"></canvas>
+  </div>
+</div>
+
+<div class="row">
+
+{% for tailor in tailors %}
+<div class="col-md-4 grid-margin">
+
+  <div class="card shadow-sm h-100 border-0">
+    <div class="card-body">
+
+      <!-- HEADER -->
+      <div class="d-flex align-items-center border-bottom pb-3">
+
+        {% if tailor.profile_pic %}
+          <img src="{{ tailor.profile_pic.url }}" class="rounded-circle me-3" width="50">
+        {% else %}
+          <img src="{% static 'admin/images/faces/face1.jpg' %}" class="rounded-circle me-3" width="50">
+        {% endif %}
+
+        <div>
+          <h6 class="mb-0">
+            {{ tailor.name }}
+
+            <!-- 🏆 TOP BADGE -->
+            {% if top_performer.id == tailor.id %}
+              <span class="badge bg-warning text-dark">Top Performer 🏆</span>
+            {% endif %}
+          </h6>
+
+          <small class="text-muted">{{ tailor.specialty }}</small>
+        </div>
+
+      </div>
+
+      <!-- DATA -->
+      <div class="mt-3">
+
+        <p class="d-flex justify-content-between">
+          <span>Completed Orders</span>
+          <strong>{{ tailor.completed_orders }}</strong>
+        </p>
+
+        <p class="d-flex justify-content-between">
+          <span>Rating</span>
+          <span>⭐ {{ tailor.avg_rating|default:"0"|floatformat:1 }}</span>
+        </p>
+
+        <!-- ⚠️ LOW PERFORMANCE -->
+        {% if tailor.is_low %}
+          <div class="alert alert-danger py-1 mt-2">
+            ⚠️ Low Performance
+          </div>
+        {% endif %}
+
+        <!-- PROGRESS -->
+        <div class="mt-3">
+          <small>Efficiency</small>
+
+          <div class="progress mt-2" style="height:8px;">
+            <div class="progress-bar 
+                {% if tailor.efficiency > 70 %}bg-success
+                {% elif tailor.efficiency > 40 %}bg-warning
+                {% else %}bg-danger{% endif %}"
+                style="border: 0cap;">
+            </div>
+          </div>
+
+          <small>{{ tailor.efficiency }}%</small>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- 📊 CHART JS -->
+<script src="{% static 'admin/vendors/chart.js/Chart.min.js' %}"></script>
+
+<!-- <script>
+const ctx = document.getElementById('orderChart');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: [{% for i in monthly_data %}'{{ i.month|date:"M Y" }}',{% endfor %}],
+        datasets: [{
+            label: 'Orders',
+            data: [{% for i in monthly_data %}{{ i.count }},{% endfor %}],
+            fill: false,
+            tension: 0.3
+        }]
+    }
+});
+</script> -->
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- {% load static %}
+
+<div class="row">
+  <div class="col-md-12 grid-margin">
+    <h4 class="card-title">Tailor Performance Metrics</h4>
+  </div>
+</div>
+
+<div class="row">
+  {% for tailor in tailors %}
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex align-items-center pb-3 border-bottom">
+          <img src="{{ tailor.profile_pic.url|default:'/static/admin/images/faces/face1.jpg' }}" alt="profile" class="img-sm rounded-circle me-3">
+          <div>
+            <h6 class="mb-0">{{ tailor.name }}</h6>
+            <small class="text-muted">{{ tailor.specialty }}</small>
+          </div>
+        </div>
+        <div class="py-4">
+          <p class="clearfix">
+            <span class="float-left">Orders Completed</span>
+            <span class="float-right text-muted">45</span>
+          </p>
+          <p class="clearfix">
+            <span class="float-left">Customer Rating</span>
+            <span class="float-right text-muted">
+              <i class="mdi mdi-star text-warning"></i> 4.8/5
+            </span>
+          </p>
+          <div class="mt-3">
+            <small>Efficiency Target</small>
+            <div class="progress progress-md mt-2">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block">View Full Report</button>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div> -->

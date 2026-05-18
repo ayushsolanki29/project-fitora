@@ -1,0 +1,142 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-0">Order Details</h4>
+                    <small class="text-muted">Order #{{ order.order_number }}</small>
+                </div>
+                <div>
+                    {% if order.status == 'Pending' %}
+                        <span class="badge bg-warning text-dark fs-6">Pending</span>
+                    {% elif order.status == 'Confirmed' %}
+                        <span class="badge bg-info fs-6">Confirmed</span>
+                    {% elif order.status == 'Cutting' %}
+                        <span class="badge bg-primary fs-6">Cutting</span>
+                    {% elif order.status == 'Stitching' %}
+                        <span class="badge bg-primary fs-6">Stitching</span>
+                    {% elif order.status == 'Ready' %}
+                        <span class="badge bg-info fs-6">Ready</span>
+                    {% elif order.status == 'Delivered' %}
+                        <span class="badge bg-success fs-6">Delivered</span>
+                    {% elif order.status == 'Cancelled' %}
+                        <span class="badge bg-danger fs-6">Cancelled</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <hr>
+            
+            <!-- Order Information -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h6 class="text-muted mb-3">Order Information</h6>
+                        <p><strong>Garment Type:</strong> {{ order.garment_type }}</p>
+                        <p><strong>Tailor Assigned:</strong> {{ order.tailor_name|default:"Not Assigned Yet" }}</p>
+                        <p><strong>Order Date:</strong> {{ order.created_at|date:"d M Y, H:i A" }}</p>
+                        <p><strong>Last Updated:</strong> {{ order.updated_at|date:"d M Y, H:i A" }}</p>
+                        {% if order.delivery_date %}
+                        <p><strong>Delivery Date:</strong> {{ order.delivery_date|date:"d M Y" }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="bg-light p-3 rounded">
+                        <h6 class="text-muted mb-3">Payment Summary</h6>
+                        <p><strong>Total Amount:</strong> ₹{{ order.amount|floatformat:2 }}</p>
+                        <p><strong>Advance Paid:</strong> ₹{{ order.advance_paid|floatformat:2 }}</p>
+                        <p><strong>Balance Due:</strong> 
+                            <span class="{% if order.balance_due > 0 %}text-danger fw-bold{% else %}text-success{% endif %}">
+                                ₹{{ order.balance_due|floatformat:2 }}
+                            </span>
+                        </p>
+                        <p><strong>Payment Status:</strong> 
+                            {% if order.payment_status == 'Paid' %}
+                                <span class="badge bg-success">Paid</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ order.payment_status }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Description -->
+            {% if order.description %}
+            <div class="mb-3">
+                <div class="bg-light p-3 rounded">
+                    <h6 class="text-muted mb-2">Order Description / Instructions</h6>
+                    <p class="mb-0">{{ order.description }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Measurements -->
+            {% if order.measurements %}
+            <div class="mb-3">
+                <div class="bg-light p-3 rounded">
+                    <h6 class="text-muted mb-2">Measurements</h6>
+                    <div class="row">
+                        {% for key, value in order.measurements.items %}
+                            {% if value %}
+                            <div class="col-md-3">
+                                <small class="text-muted">{{ key|title }}:</small>
+                                <strong>{{ value }}"</strong>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+                <h6 class="mb-2">Order Progress</h6>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar progress-bar-striped {% if order.status != 'Delivered' %}progress-bar-animated{% endif %}" 
+                         role="progressbar" style="width: {{ order.progress_percentage }}%;">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                    <small>Placed</small>
+                    <small>Confirmed</small>
+                    <small>Cutting</small>
+                    <small>Stitching</small>
+                    <small>Ready</small>
+                    <small>Delivered</small>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="mt-4 d-flex gap-2 flex-wrap">
+                <a href="{% url 'customer:order_status_tracking' order.id %}" class="btn btn-info">
+                    <i class="mdi mdi-map-marker-path"></i> Track Order
+                </a>
+                <a href="{% url 'customer:delivery_date_information' order.id %}" class="btn btn-outline-info">
+                    <i class="mdi mdi-calendar"></i> Delivery Info
+                </a>
+                {% if order.balance_due > 0 %}
+                <a href="{% url 'customer:make_payment' %}" class="btn btn-success">
+                    <i class="mdi mdi-cash"></i> Pay Balance
+                </a>
+                {% endif %}
+                <a href="{% url 'customer:view_all_orders' %}" class="btn btn-light">
+                    <i class="mdi mdi-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FITORA - Services UI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      padding: 15px 40px;
+      background: white;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .nav-link {
+      margin: 0 10px;
+      color: black !important;
+    }
+
+    .btn-custom {
+      background: #c49a6c;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .hero {
+      background: #f5f0ff;
+      padding: 60px 0;
+    }
+
+    .btn-purple {
+      background: #6f42c1;
+      color: #fff;
+    }
+
+    .btn-purple:hover {
+      background: #5a34a3;
+    }
+
+    .service-card {
+      border-radius: 16px;
+      padding: 25px;
+      background: #fff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      transition: 0.3s;
+      height: 100%;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .icon {
+      font-size: 30px;
+      margin-bottom: 15px;
+      color: #6f42c1;
+    }
+
+    footer {
+      background: #1c1c2e;
+      color: white;
+      padding: 30px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+
+  <nav class="navbar navbar-expand-lg shadow-sm">
+    <div class="container-fluid">
+      <!-- Logo -->
+      <a class="navbar-brand" href="{% url 'website:index' %}">FITORA</a>
+
+      <!-- Toggle -->
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Menu -->
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/' or request.path == '/index/' %}active{% endif %}"
+              href="{% url 'website:index' %}">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'about' in request.path %}active{% endif %}"
+              href="{% url 'website:about' %}">About</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'how-it-works' in request.path %}active{% endif %}"
+              href="{% url 'website:how_it_works' %}">How It Works</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'services' in request.path %}active{% endif %}"
+              href="{% url 'website:services' %}">Services</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'tailors' in request.path %}active{% endif %}"
+              href="{% url 'website:tailors' %}">Tailors</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'pricing' in request.path %}active{% endif %}"
+              href="{% url 'website:pricing' %}">Pricing</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'track-order' in request.path %}active{% endif %}"
+              href="{% url 'website:track_order' %}">Track Order</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link {% if 'contact' in request.path %}active{% endif %}"
+              href="{% url 'website:contact' %}">Contact</a>
+          </li>
+        </ul>
+
+        <!-- CTA Button -->
+        <a href="{% url 'website:book_tailor' %}">
+          <button class="btn-custom">Book Tailor</button>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero text-center">
+    <div class="container">
+      <h1>Smart Tailoring Made Easy</h1>
+      <p>Manage measurements, track orders and connect with tailors</p>
+      <a href="{% url 'website:book_tailor' %}" class="btn btn-purple m-2">Book Now</a>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Our Services</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">✂️</div>
+            <h5>Custom Stitching</h5>
+            <p>Upload your design and get perfectly stitched clothes.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">📏</div>
+            <h5>Measurement Management</h5>
+            <p>Save and reuse your body measurements easily.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">📦</div>
+            <h5>Order Tracking</h5>
+            <p>Track your order status in real-time.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">🧑‍🔧</div>
+            <h5>Tailor Booking</h5>
+            <p>Choose professional tailors based on ratings.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">💳</div>
+            <h5>Online Payment</h5>
+            <p>Secure and flexible payment options available.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="service-card text-center">
+            <div class="icon">⭐</div>
+            <h5>Reviews & Ratings</h5>
+            <p>Rate your tailor and help others choose better.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container text-center">
+      <h5>FITORA</h5>
+      <p>Smart Tailoring Management System</p>
+    </div>
+  </footer>
+    {% include 'includes/fitora_chatbot.html' %}
+
+</body>
+
+</html>

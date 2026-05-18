@@ -1,0 +1,191 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12 grid-margin">
+    <div class="d-flex justify-content-between flex-wrap">
+      <div>
+        <h2>Welcome back, {{ tailor.first_name|default:tailor.username }}! 👋</h2>
+        <p class="text-muted">Here's what's happening with your tailoring business today.</p>
+      </div>
+      <div>
+        <span class="text-muted">{{ now|date:"l, F j, Y" }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row">
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card stat-card bg-gradient-primary text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="mb-0">Total Orders</h6>
+            <h2 class="mt-2 mb-0">{{ total_orders }}</h2>
+          </div>
+          <i class="mdi mdi-cart mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card stat-card bg-gradient-warning text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="mb-0">Pending Orders</h6>
+            <h2 class="mt-2 mb-0">{{ pending_orders }}</h2>
+          </div>
+          <i class="mdi mdi-clock mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card stat-card bg-gradient-success text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="mb-0">Completed</h6>
+            <h2 class="mt-2 mb-0">{{ completed_orders }}</h2>
+          </div>
+          <i class="mdi mdi-check-circle mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-3 grid-margin stretch-card">
+    <div class="card stat-card bg-gradient-danger text-white">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="mb-0">Total Earnings</h6>
+            <h2 class="mt-2 mb-0">₹{{ total_earnings|floatformat:2 }}</h2>
+          </div>
+          <i class="mdi mdi-currency-inr mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="mdi mdi-rocket"></i> Quick Actions
+        </h5>
+        <hr>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{% url 'tailor:create_new_orders' %}" class="btn btn-primary">
+            <i class="mdi mdi-plus"></i> New Order
+          </a>
+          <a href="{% url 'tailor:add_new_customer' %}" class="btn btn-success">
+            <i class="mdi mdi-account-plus"></i> Add Customer
+          </a>
+          <a href="{% url 'tailor:add_payments' %}" class="btn btn-info">
+            <i class="mdi mdi-cash"></i> Record Payment
+          </a>
+          <a href="{% url 'tailor:view_all_orders' %}" class="btn btn-dark">
+            <i class="mdi mdi-cart"></i> View Orders
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts and Recent Orders -->
+<div class="row mt-4">
+  
+  <!-- Chart -->
+  <div class="col-md-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Monthly Orders Overview</h5>
+        <canvas id="ordersChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recent Orders -->
+  <div class="col-md-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Recent Orders</h5>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td>#{{ order.order_number|truncatechars:10 }}</td>
+                <td>{{ order.customer.get_full_name }}</td>
+                <td>₹{{ order.amount|floatformat:2 }}</td>
+                <td>
+                  {% if order.status == 'Pending' %}
+                    <span class="badge bg-warning">Pending</span>
+                  {% elif order.status == 'Delivered' %}
+                    <span class="badge bg-success">Delivered</span>
+                  {% elif order.status == 'Cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                  {% else %}
+                    <span class="badge bg-info">{{ order.status }}</span>
+                  {% endif %}
+                 </td>
+               </tr>
+              {% empty %}
+               <tr><td colspan="4" class="text-center">No orders found</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+// Chart.js for orders
+const ctx = document.getElementById('ordersChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: 'Orders',
+            data: {{ chart_data|safe }},
+            borderColor: '#28a745',
+            backgroundColor: 'rgba(40,167,69,0.1)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+</script>
+
+{% endblock %}

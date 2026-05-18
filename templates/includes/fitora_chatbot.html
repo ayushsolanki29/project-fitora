@@ -1,0 +1,128 @@
+{% if GEMINI_CHAT_ENABLED %}
+<style>
+#fitora-chat-btn {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  width: 60px; height: 60px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, #c49a6c, #8b6914);
+  color: white; font-size: 26px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+#fitora-chat-panel {
+  display: none; position: fixed; bottom: 95px; right: 24px; z-index: 9998;
+  width: 360px; max-width: calc(100vw - 48px); height: 480px;
+  background: white; border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+  flex-direction: column; overflow: hidden;
+}
+#fitora-chat-panel.open { display: flex; }
+#fitora-chat-header {
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  color: white; padding: 14px 16px; font-weight: 600;
+}
+#fitora-chat-messages {
+  flex: 1; overflow-y: auto; padding: 12px; font-size: 14px;
+  background: #f8f9fa;
+}
+.chat-msg { margin-bottom: 10px; max-width: 90%; }
+.chat-msg.user { margin-left: auto; text-align: right; }
+.chat-msg.user .bubble {
+  background: #c49a6c; color: white; display: inline-block;
+  padding: 8px 12px; border-radius: 12px 12px 2px 12px;
+}
+.chat-msg.bot .bubble {
+  background: white; border: 1px solid #ddd; display: inline-block;
+  padding: 8px 12px; border-radius: 12px 12px 12px 2px;
+}
+#fitora-chat-input-row {
+  display: flex; gap: 8px; padding: 10px; border-top: 1px solid #eee;
+}
+#fitora-chat-input {
+  flex: 1; border: 1px solid #ddd; border-radius: 20px;
+  padding: 8px 14px; font-size: 14px; outline: none;
+}
+#fitora-chat-send {
+  background: #c49a6c; color: white; border: none;
+  border-radius: 20px; padding: 8px 16px; cursor: pointer;
+}
+.chat-typing { color: #888; font-size: 12px; padding: 4px 0; }
+</style>
+
+<button id="fitora-chat-btn" title="FITORA AI Assistant">💬</button>
+
+<div id="fitora-chat-panel">
+  <div id="fitora-chat-header">🤖 FITORA AI Assistant</div>
+  <div id="fitora-chat-messages">
+    <div class="chat-msg bot">
+      <span class="bubble">Hi! I'm FITORA's AI assistant. Ask me about tailors, booking, orders, or payments — I have live access to our database!</span>
+    </div>
+  </div>
+  <div id="fitora-chat-input-row">
+    <input id="fitora-chat-input" type="text" placeholder="Ask anything..." maxlength="500" />
+    <button id="fitora-chat-send">Send</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  const btn = document.getElementById('fitora-chat-btn');
+  const panel = document.getElementById('fitora-chat-panel');
+  const messages = document.getElementById('fitora-chat-messages');
+  const input = document.getElementById('fitora-chat-input');
+  const sendBtn = document.getElementById('fitora-chat-send');
+  const csrf = '{{ csrf_token }}';
+
+  btn.onclick = () => panel.classList.toggle('open');
+
+  function addMsg(role, text) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (role === 'user' ? 'user' : 'bot');
+    div.innerHTML = '<span class="bubble"></span>';
+    div.querySelector('.bubble').textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMsg('user', text);
+    const typing = document.createElement('div');
+    typing.className = 'chat-typing';
+    typing.textContent = 'Thinking...';
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+      const res = await fetch('{% url "website:api_chat" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrf,
+        },
+        body: JSON.stringify({ message: text }),
+      });
+      typing.remove();
+      const data = await res.json();
+      addMsg('bot', data.success ? data.reply : (data.message || 'Something went wrong.'));
+    } catch (e) {
+      typing.remove();
+      addMsg('bot', 'Connection error. Please try again.');
+    }
+  }
+
+  sendBtn.onclick = sendMessage;
+  input.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(); };
+
+  fetch('{% url "website:api_chat_history" %}')
+    .then(r => r.json())
+    .then(data => {
+      if (data.messages && data.messages.length > 1) {
+        messages.innerHTML = '';
+        data.messages.forEach(m => addMsg(m.role === 'user' ? 'user' : 'bot', m.content));
+      }
+    })
+    .catch(() => {});
+})();
+</script>
+{% endif %}

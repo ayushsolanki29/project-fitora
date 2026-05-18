@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Become a Tailor - FITORA</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f9;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #111827;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar-brand span {
+            color: #c49a6c;
+        }
+
+        .nav-link {
+            color: #ddd !important;
+            margin-left: 15px;
+        }
+
+        .nav-link:hover {
+            color: #c49a6c !important;
+        }
+
+        /* HERO */
+
+        .hero {
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url("https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1400&auto=format&fit=crop");
+            background-size: cover;
+            background-position: center;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 55px;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 20px;
+        }
+
+        /* FORM SECTION */
+
+        .form-section {
+            padding: 80px 0;
+        }
+
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .form-title h2 {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .form-control:focus {
+            border-color: #c49a6c;
+            box-shadow: none;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* BENEFITS */
+
+        .benefits {
+            background: #111827;
+            color: white;
+            border-radius: 18px;
+            padding: 35px;
+            height: 100%;
+        }
+
+        .benefits h3 {
+            margin-bottom: 25px;
+        }
+
+        .benefits ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits ul li {
+            margin-bottom: 18px;
+            font-size: 17px;
+        }
+
+        .benefits i {
+            color: #c49a6c;
+            margin-right: 10px;
+        }
+
+        /* BUTTON */
+
+        .btn-apply {
+            background: #c49a6c;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 30px;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-apply:hover {
+            background: #a67c52;
+        }
+
+        /* STATUS */
+
+        .status-box {
+            background: #fff8e7;
+            border-left: 5px solid #c49a6c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #111827;
+            color: #ccc;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"> FI<span>TORA</span> </a>
+
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+                   <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' or request.path == '/index/' %}active{% endif %}" 
+                       href="{% url 'website:index' %}">Home</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'about' in request.path %}active{% endif %}" 
+                       href="{% url 'website:about' %}">About</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'how-it-works' in request.path %}active{% endif %}" 
+                       href="{% url 'website:how_it_works' %}">How It Works</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'services' in request.path %}active{% endif %}" 
+                       href="{% url 'website:services' %}">Services</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'tailors' in request.path %}active{% endif %}" 
+                       href="{% url 'website:tailors' %}">Tailors</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'pricing' in request.path %}active{% endif %}" 
+                       href="{% url 'website:pricing' %}">Pricing</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'track-order' in request.path %}active{% endif %}" 
+                       href="{% url 'website:track_order' %}">Track Order</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link {% if 'contact' in request.path %}active{% endif %}" 
+                       href="{% url 'website:contact' %}">Contact</a>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+
+    <section class="hero">
+        <div>
+            <h1>Become a FITORA Tailor</h1>
+            <p>Grow your tailoring business with FITORA</p>
+        </div>
+    </section>
+
+    <!-- FORM -->
+
+    <section class="form-section">
+        <div class="container">
+            <div class="row g-4">
+                <!-- LEFT SIDE -->
+
+                <div class="col-lg-8">
+                    <div class="form-card">
+                        <div class="form-title">
+                            <h2>Tailor Registration Form</h2>
+                            <p>Submit your shop details for admin approval</p>
+                        </div>
+
+                        <div class="status-box">
+                            <strong>Application Status:</strong>
+                            After submitting, your request will be reviewed by FITORA admin.
+                        </div>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'website:become_tailor' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>First Name *</label>
+                                    <input type="text" name="first_name" class="form-control" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Last Name</label>
+                                    <input type="text" name="last_name" class="form-control" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Shop Name *</label>
+                                    <input type="text" name="shop_name" class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Phone *</label>
+                                    <input type="text" name="phone" class="form-control" value="{{ reg_data.mobile }}" required />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Email *</label>
+                                    <input type="email" name="email" class="form-control" value="{{ reg_data.email }}" required />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Experience</label>
+                                    <select name="experience" class="form-control">
+                                        <option value="2">1-3 Years</option>
+                                        <option value="4">3-5 Years</option>
+                                        <option value="7">5-10 Years</option>
+                                        <option value="12">10+ Years</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Specialization *</label>
+                                    <select name="specialty" class="form-control" required>
+                                        {% for val, label in specialties %}
+                                        <option value="{{ val }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>City</label>
+                                    <input type="text" name="city" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Shop Address *</label>
+                                <textarea name="address" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Password *</label>
+                                    <input type="password" name="password" class="form-control" required />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-apply">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE -->
+
+                <div class="col-lg-4">
+                    <div class="benefits">
+                        <h3>Why Join FITORA?</h3>
+
+                        <ul>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Get More Customers
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Receive Online Orders
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Manage Orders Easily
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Increase Business Growth
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Professional Dashboard
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Order Tracking System
+                            </li>
+
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                Secure Payments
+                            </li>
+                        </ul>
+
+                        <hr />
+
+                        <h5>Approval Process</h5>
+
+                        <p>
+                            1. Submit Details<br />
+                            2. Admin Verification<br />
+                            3. Approval<br />
+                            4. Start Receiving Orders
+                        </p>
+                    </div>
+                </div>
+                <!-- WHAT WE PROVIDE -->
+
+                <section class="py-5 bg-light">
+
+                    <div class="container">
+
+                        <div class="text-center mb-5">
+                            <h2 class="fw-bold">What FITORA Provides</h2>
+                            <p class="text-muted">
+                                Everything tailors need to grow their business digitally
+                            </p>
+                        </div>
+
+                        <div class="row g-4">
+
+                            <!-- CARD 1 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-users fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>More Customers</h5>
+
+                                    <p class="text-muted">
+                                        Receive stitching orders from nearby customers through FITORA platform.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 2 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-laptop fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>Professional Dashboard</h5>
+
+                                    <p class="text-muted">
+                                        Manage orders, customer measurements, delivery status, and payments easily.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 3 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-chart-line fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>Business Growth</h5>
+
+                                    <p class="text-muted">
+                                        Increase your tailoring income and grow your shop with online visibility.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 4 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-box fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>Order Management</h5>
+
+                                    <p class="text-muted">
+                                        Track pending, accepted, stitching, and completed orders in one place.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 5 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-star fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>Ratings & Reviews</h5>
+
+                                    <p class="text-muted">
+                                        Build trust through customer reviews and improve your tailoring reputation.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <!-- CARD 6 -->
+                            <div class="col-md-4">
+
+                                <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                                    <div class="mb-3">
+                                        <i class="fas fa-wallet fa-3x text-warning"></i>
+                                    </div>
+
+                                    <h5>Secure Payments</h5>
+
+                                    <p class="text-muted">
+                                        Receive secure online payments directly through FITORA platform.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <p>© 2026 FITORA - Smart Tailoring Management System</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+```

@@ -1,0 +1,125 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-10 grid-margin stretch-card">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+
+        <h4 class="card-title mb-3">Edit Profile</h4>
+        <p class="text-muted">Update your personal and professional details.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="row">
+
+            <!-- LEFT SIDE -->
+            <div class="col-md-4 text-center">
+
+              <!-- Profile Preview -->
+              <div class="mb-3">
+                <img id="previewImage"
+                     src="{% if user.profile_pic %}{{ user.profile_pic.url }}{% else %}{% static 'admin/images/faces/face1.jpg' %}{% endif %}"
+                     class="rounded-circle shadow"
+                     style="width:140px;height:140px;object-fit:cover;">
+              </div>
+
+              <label class="btn btn-outline-primary btn-sm">
+                <i class="mdi mdi-upload"></i> Change Photo
+                <input type="file" name="profile_pic" hidden onchange="previewFile(event)">
+              </label>
+
+              <small class="d-block text-muted mt-2">
+                JPG, PNG allowed (Max 2MB)
+              </small>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="col-md-8">
+
+              <div class="row">
+
+                <div class="col-md-6 form-group mb-3">
+                  <label>First Name</label>
+                  <input type="text" class="form-control" name="first_name"
+                         value="{{ user.first_name }}" required>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                  <label>Last Name</label>
+                  <input type="text" class="form-control" name="last_name"
+                         value="{{ user.last_name }}" required>
+                </div>
+
+              </div>
+
+              <div class="form-group mb-3">
+                <label>Email (Read Only)</label>
+                <input type="email" class="form-control"
+                       value="{{ user.email }}" disabled>
+              </div>
+
+              <div class="form-group mb-3">
+                <label>Specialization</label>
+                <input type="text" class="form-control"
+                       name="specialty"
+                       value="{{ user.tailor_specialty }}"
+                       placeholder="e.g. Bridal Wear, Suits, Designer Blouses">
+              </div>
+
+              <div class="form-group mb-3">
+                <label>Experience (Years)</label>
+                <input type="number" class="form-control"
+                       name="experience"
+                       value="{{ user.years_of_experience }}"
+                       min="0">
+              </div>
+
+              <div class="form-group mb-3">
+                <label>Bio</label>
+                <textarea class="form-control" name="bio" rows="4"
+                          placeholder="Tell customers about your skills...">{{ user.bio }}</textarea>
+              </div>
+
+            </div>
+
+          </div>
+
+          <hr>
+
+          <!-- ACTION BUTTONS -->
+          <div class="d-flex justify-content-between mt-3">
+
+            <a href="{% url 'tailor:view_profile' %}" class="btn btn-light">
+              Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary btn-icon-text">
+              <i class="mdi mdi-content-save"></i> Save Changes
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE PREVIEW SCRIPT -->
+<script>
+function previewFile(event) {
+    const reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById('previewImage').src = reader.result;
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+
+{% endblock %}

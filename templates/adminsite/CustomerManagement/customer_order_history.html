@@ -1,0 +1,132 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Order History for {{ customer.get_full_name }}</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Assigned Tailor</th>
+                <th>Date</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Invoice</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.tailor.name }}</td>
+                <td>{{ order.created_at|date:"d M Y" }}</td>
+                <td>${{ order.total_price }}</td>
+                <td>
+                  {% if order.status == 'Completed' %}
+                  <label class="badge badge-success">{{ order.status }}</label>
+                  {% elif order.status == 'Pending' %}
+                  <label class="badge badge-warning">{{ order.status }}</label>
+                  {% else %}
+                  <label class="badge badge-info">{{ order.status }}</label>
+                  {% endif %}
+                </td>
+                <td><button class="btn btn-sm btn-link">Download PDF</button></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="text-center">This customer has no previous orders.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4">
+          <a href="{% url 'adminsite:view_all_customers' %}" class="btn btn-light">Back to Customers</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- {% load static %}
+
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Order History for {{ customer.get_full_name }}</h4>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Assigned Tailor</th>
+                <th>Date</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Invoice</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.tailor.name }}</td>
+                <td>{{ order.created_at|date:"d M Y" }}</td>
+                <td>${{ order.total_price }}</td>
+                <td>
+                  {% if order.status == 'Completed' %}
+                  <label class="badge badge-success">{{ order.status }}</label>
+                  {% elif order.status == 'Pending' %}
+                  <label class="badge badge-warning">{{ order.status }}</label>
+                  {% else %}
+                  <label class="badge badge-info">{{ order.status }}</label>
+                  {% endif %}
+                </td>
+                <td><button class="btn btn-sm btn-link">Download PDF</button></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="text-center">This customer has no previous orders.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4">
+          <a href="{% url 'adminsite:view_all_customers' %}" class="btn btn-light">Back to Customers</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

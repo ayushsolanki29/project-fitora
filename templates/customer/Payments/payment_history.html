@@ -1,0 +1,116 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h3 class="fw-bold">Payment History</h3>
+    <p class="text-muted">Track all your transactions</p>
+  </div>
+  <div class="col-md-4 text-md-right">
+    <a href="{% url 'customer:make_payment' %}" class="btn btn-primary">
+      <i class="mdi mdi-cash"></i> Make Payment
+    </a>
+  </div>
+</div>
+
+<!-- Filter -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2">
+      <div class="col-md-4">
+        <input type="text" name="search" value="{{ request.GET.search }}" class="form-control" placeholder="Search by Order ID">
+      </div>
+      <div class="col-md-3">
+        <select name="status" class="form-control">
+          <option value="">All Status</option>
+          <option value="Success" {% if request.GET.status == "Success" %}selected{% endif %}>Success</option>
+          <option value="Pending" {% if request.GET.status == "Pending" %}selected{% endif %}>Pending</option>
+          <option value="Failed" {% if request.GET.status == "Failed" %}selected{% endif %}>Failed</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="date" name="date" value="{{ request.GET.date }}" class="form-control">
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-dark w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Payments Table -->
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Transaction ID</th>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Receipt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in page_obj %}
+          <tr>
+            <td>{{ payment.transaction_id|truncatechars:15 }}</td>
+            <td><strong>#{{ payment.order.order_number|truncatechars:10 }}</strong></td>
+            <td>{{ payment.created_at|date:"d M Y, H:i" }}</td>
+            <td class="fw-bold text-success">₹{{ payment.amount|floatformat:2 }}</td>
+            <td><span class="badge bg-light text-dark">{{ payment.payment_method }}</span></td>
+            <td>
+              {% if payment.status == 'Success' %}
+                <span class="badge bg-success">Success</span>
+              {% elif payment.status == 'Pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% else %}
+                <span class="badge bg-danger">Failed</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'customer:download_receipt' payment.id %}" class="btn btn-sm btn-outline-info">
+                <i class="mdi mdi-download"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-4">
+              <i class="mdi mdi-cash-off mdi-36px text-muted"></i>
+              <p class="mt-2">No transactions found</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-4 d-flex justify-content-between">
+      <div class="text-muted">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</div>
+      <nav>
+        <ul class="pagination mb-0">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev</a></li>
+          {% endif %}
+          <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+
+{% endblock %}

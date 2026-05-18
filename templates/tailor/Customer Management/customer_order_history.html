@@ -1,0 +1,138 @@
+{% extends 'tailor/base.html' %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="card-title mb-1">
+              Orders History
+            </h4>
+            <p class="text-muted mb-0">
+              Customer: <strong>{{ customer.get_full_name }}</strong>
+            </p>
+          </div>
+
+          <a href="{% url 'tailor:view_customers' %}" class="btn btn-light">
+            <i class="mdi mdi-arrow-left"></i> Back
+          </a>
+        </div>
+
+        <hr>
+
+        <!-- STATS -->
+        <div class="row text-center mb-4">
+          <div class="col-md-4">
+            <div class="border rounded p-3">
+              <h5 class="text-primary">{{ customer_orders|length }}</h5>
+              <small class="text-muted">Total Orders</small>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="border rounded p-3">
+              <h5 class="text-success">
+                ₹{{ total_revenue|default:"0" }}
+              </h5>
+              <small class="text-muted">Total Revenue</small>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="border rounded p-3">
+              <h5 class="text-warning">
+                {{ pending_count|default:"0" }}
+              </h5>
+              <small class="text-muted">Pending Orders</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead class="bg-light">
+              <tr>
+                <th>#</th>
+                <th>Garment</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Last Updated</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for order in customer_orders %}
+              <tr>
+
+                <td><strong>#ORD-{{ order.id }}</strong></td>
+
+                <td>
+                  <div class="d-flex align-items-center">
+                    <i class="mdi mdi-tshirt-crew me-2 text-primary"></i>
+                    {{ order.garment_type }}
+                  </div>
+                </td>
+
+                <td>
+                  {% if order.status == 'Pending' %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% elif order.status == 'In Progress' %}
+                    <span class="badge bg-info text-white">In Progress</span>
+                  {% elif order.status == 'Completed' %}
+                    <span class="badge bg-success">Completed</span>
+                  {% elif order.status == 'Cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                  {% else %}
+                    <span class="badge bg-secondary">{{ order.status }}</span>
+                  {% endif %}
+                </td>
+
+                <td class="fw-bold text-dark">
+                  ₹{{ order.total_amount }}
+                </td>
+
+                <td>
+                  {{ order.updated_at|date:"d M Y" }}
+                </td>
+
+                <td class="text-end">
+                  <a href="{% url 'tailor:order_detail' order.id %}" 
+                     class="btn btn-outline-primary btn-sm">
+                    <i class="mdi mdi-eye"></i>
+                  </a>
+                </td>
+
+              </tr>
+              {% empty %}
+
+              <!-- EMPTY STATE -->
+              <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                  <i class="mdi mdi-package-variant-closed" style="font-size:40px;"></i>
+                  <p class="mt-2">No orders found for this customer.</p>
+                </td>
+              </tr>
+
+              {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

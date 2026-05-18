@@ -1,0 +1,121 @@
+{% extends 'tailor/base.html' %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="card-title mb-1">
+              Measurement Records
+            </h4>
+            <p class="text-muted mb-0">
+              Customer: <strong>{{ customer.get_full_name }}</strong>
+            </p>
+          </div>
+
+          <a href="#" class="btn btn-light">
+            <i class="mdi mdi-arrow-left"></i> Back
+          </a>
+        </div>
+
+        <hr>
+
+        <!-- MEASUREMENTS GRID -->
+        <div class="row">
+
+          <!-- UPPER BODY -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 bg-light h-100">
+              <div class="card-body">
+
+                <h5 class="text-primary mb-4">
+                  <i class="mdi mdi-human-male me-1"></i> Upper Body
+                </h5>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Neck</span>
+                  <strong>{{ measurements.neck|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Chest</span>
+                  <strong>{{ measurements.chest|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Shoulder</span>
+                  <strong>{{ measurements.shoulder|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2">
+                  <span>Sleeve Length</span>
+                  <strong>{{ measurements.sleeve_length|default:"--" }} in</strong>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- LOWER BODY -->
+          <div class="col-md-6 mb-4">
+            <div class="card border-0 bg-light h-100">
+              <div class="card-body">
+
+                <h5 class="text-primary mb-4">
+                  <i class="mdi mdi-hanger me-1"></i> Lower Body
+                </h5>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Waist</span>
+                  <strong>{{ measurements.waist|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Hip</span>
+                  <strong>{{ measurements.hip|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                  <span>Inseam</span>
+                  <strong>{{ measurements.inseam|default:"--" }} in</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2">
+                  <span>Length</span>
+                  <strong>{{ measurements.length|default:"--" }} in</strong>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- EMPTY STATE -->
+        {% if not measurements %}
+        <div class="text-center text-muted py-5">
+          <i class="mdi mdi-alert-circle-outline" style="font-size:50px;"></i>
+          <p class="mt-2">No measurements available for this customer.</p>
+        </div>
+        {% endif %}
+
+        <!-- ACTION BUTTONS -->
+        <div class="mt-4 text-end">
+          <a href="#" 
+             class="btn btn-primary btn-icon-text">
+            <i class="mdi mdi-pencil btn-icon-prepend"></i>
+            Edit Measurements
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

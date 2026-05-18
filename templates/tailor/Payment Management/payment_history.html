@@ -1,0 +1,117 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h3 class="fw-bold">Payment History 📜</h3>
+    <p class="text-muted">Track all your earnings and transactions</p>
+  </div>
+  <div class="col-md-4 text-md-right">
+    <button class="btn btn-outline-dark" onclick="window.print()">
+      <i class="mdi mdi-printer"></i> Print
+    </button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h6>Total Earnings</h6>
+        <h3>₹{{ total_earnings|floatformat:2 }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h6>Total Transactions</h6>
+        <h3>{{ payments|length }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card bg-info text-white">
+      <div class="card-body">
+        <h6>Today's Earnings</h6>
+        <h3>₹{{ today_earnings|floatformat:2 }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-3">
+      <div class="col-md-4">
+        <label>From Date</label>
+        <input type="date" name="start" class="form-control" value="{{ request.GET.start }}">
+      </div>
+      <div class="col-md-4">
+        <label>To Date</label>
+        <input type="date" name="end" class="form-control" value="{{ request.GET.end }}">
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary w-100">Apply Filter</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">All Transactions</h4>
+    
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Receipt #</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Order ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Receipt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in payments %}
+          <tr>
+            <td>{{ p.receipt_number }}</td>
+            <td>{{ p.created_at|date:"d M Y" }}</td>
+            <td>{{ p.customer.get_full_name }}</td>
+            <td>#{{ p.order.order_number|truncatechars:8 }}</td>
+            <td class="fw-bold text-success">+ ₹{{ p.amount|floatformat:2 }}</td>
+            <td><span class="badge bg-light text-dark">{{ p.method }}</span></td>
+            <td><span class="badge bg-success">Success</span></td>
+            <td>
+              <a href="{% url 'tailor:generate_receipt' p.id %}" class="btn btn-sm btn-outline-info">
+                <i class="mdi mdi-printer"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center py-5">
+              <i class="mdi mdi-cash-off mdi-48px text-muted"></i>
+              <p class="mt-2">No transactions found</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}

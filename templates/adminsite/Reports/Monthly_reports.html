@@ -1,0 +1,102 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.card-custom {
+  border-radius: 14px;
+  border: none;
+}
+
+.kpi-box {
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+canvas {
+  max-height: 300px;
+}
+</style>
+
+<div class="row">
+  <div class="col-md-12">
+
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between mb-4">
+          <div>
+            <h4 class="fw-bold mb-0">Monthly Business Growth</h4>
+            <small class="text-muted">Track growth trends and performance</small>
+          </div>
+
+          <a href="{% url 'adminsite:monthly_reports' %}" 
+             class="btn btn-outline-dark btn-sm">
+            <i class="mdi mdi-download"></i> Export
+          </a>
+        </div>
+
+        <!-- KPI ROW -->
+        <div class="row mb-4">
+
+          <div class="col-md-4">
+            <div class="kpi-box text-center">
+              <div class="kpi-value text-primary">
+                {{ customer_growth }}%
+              </div>
+              <div class="kpi-label">Customer Growth</div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="kpi-box text-center">
+              <div class="kpi-value text-success">
+                {{ revenue_growth }}%
+              </div>
+              <div class="kpi-label">Revenue Growth</div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="kpi-box text-center">
+              <div class="kpi-value text-danger">
+                {{ return_rate }}%
+              </div>
+              <div class="kpi-label">Return Rate</div>
+            </div>
+          </div>
+
+        </div>
+
+        <hr>
+
+        <!-- CHART -->
+        <div style="height:300px;">
+          <canvas id="monthlyGrowthChart"></canvas>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+{% endblock %}

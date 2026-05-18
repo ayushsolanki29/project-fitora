@@ -1,0 +1,11 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+
+   <a class="collapse-item text-danger" href="{% url 'logout' %}" 
+   onclick="return confirm('Are you sure you want to logout?')">
+   🚪 Logout
+</a>
+
+{% endblock %}

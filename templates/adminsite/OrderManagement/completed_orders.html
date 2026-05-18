@@ -1,0 +1,164 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.card-custom {
+  border-radius: 14px;
+  border: none;
+}
+
+.table thead th {
+  background: linear-gradient(45deg, #16a34a, #15803d);
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.badge-success-soft {
+  background: #dcfce7;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.rating-star {
+  color: #facc15;
+  font-size: 16px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+}
+</style>
+
+<div class="row">
+  <div class="col-lg-12">
+
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-0 fw-bold text-success">Completed Orders</h4>
+            <small class="text-muted">Successfully delivered orders & revenue tracking</small>
+          </div>
+
+          <div>
+            <span class="badge-success-soft">
+              Total: {{ orders|length }} Orders
+            </span>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Rating</th>
+                <th class="text-end">Revenue</th>
+                <th class="text-center">Invoice</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for order in orders %}
+              <tr>
+
+                <!-- ORDER ID -->
+                <td><strong>#ORD-{{ order.id }}</strong></td>
+
+                <!-- CUSTOMER -->
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="{% static 'admin/images/faces/face1.jpg' %}" class="avatar me-2">
+                    <div>
+                      <div class="fw-semibold">
+                        {{ order.customer.first_name }} {{ order.customer.last_name }}
+                      </div>
+                      <small class="text-muted">{{ order.customer.email }}</small>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- DATE -->
+                <td>{{ order.updated_at|date:"d M Y" }}</td>
+
+                <!-- RATING -->
+                <td>
+                  {% with rating=order.rating|default:5 %}
+                    {% for i in "12345"|slice:":rating"|make_list %}
+                      <i class="mdi mdi-star rating-star"></i>
+                    {% endfor %}
+                    <span class="ms-1 text-muted">{{ rating }}/5</span>
+                  {% endwith %}
+                </td>
+
+                <!-- REVENUE -->
+                <td class="text-end fw-bold">
+                  ₹{{ order.total_amount|floatformat:2 }}
+                </td>
+
+                <!-- INVOICE -->
+                <td class="text-center">
+
+                  <a href="{% url 'adminsite:download_invoice' order.id %}"
+                     class="btn btn-sm btn-light"
+                     title="Download Invoice">
+                    <i class="mdi mdi-download text-dark"></i>
+                  </a>
+
+                  <a href="{% url 'adminsite:print_invoice' order.id %}"
+                     target="_blank"
+                     class="btn btn-sm btn-light"
+                     title="Print Invoice">
+                    <i class="mdi mdi-printer text-success"></i>
+                  </a>
+
+                </td>
+
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  🎉 No completed orders yet
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

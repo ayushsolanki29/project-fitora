@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - FITORA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gold: #c49a6c;
+            --dark-bg: #1a1a1a;
+            --light-bg: #fdfbf9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        }
+
+        .hero h1 {
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 3rem;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: var(--primary-gold);
+            bottom: -10px;
+            left: 25%;
+            border-radius: 2px;
+        }
+
+        .card-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-box:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(196, 154, 108, 0.2);
+            border-color: var(--primary-gold);
+        }
+
+        .step-icon {
+            font-size: 45px;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .number-badge {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 40px;
+            font-weight: 800;
+            color: rgba(196, 154, 108, 0.1);
+            transition: 0.3s;
+        }
+
+        .card-box:hover .number-badge {
+            color: rgba(196, 154, 108, 0.2);
+            transform: scale(1.2);
+        }
+
+        .card-box h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-box p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Responsive spacing */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 20px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{% url 'website:index' %}">FITORA</a>
+
+            <!-- Toggle -->
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' or request.path == '/index/' %}active{% endif %}"
+                            href="{% url 'website:index' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'about' in request.path %}active{% endif %}"
+                            href="{% url 'website:about' %}">About</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'how-it-works' in request.path %}active{% endif %}"
+                            href="{% url 'website:how_it_works' %}">How It Works</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'services' in request.path %}active{% endif %}"
+                            href="{% url 'website:services' %}">Services</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'tailors' in request.path %}active{% endif %}"
+                            href="{% url 'website:tailors' %}">Tailors</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'pricing' in request.path %}active{% endif %}"
+                            href="{% url 'website:pricing' %}">Pricing</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'track-order' in request.path %}active{% endif %}"
+                            href="{% url 'website:track_order' %}">Track Order</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'contact' in request.path %}active{% endif %}"
+                            href="{% url 'website:contact' %}">Contact</a>
+                    </li>
+                </ul>
+
+                <!-- CTA Button -->
+                <a href="{% url 'website:book_tailor' %}">
+                    <button class="btn-custom">Book Tailor</button>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>How <span style="color: var(--primary-gold);">FITORA</span> Works</h1>
+        <p class="mt-3 opacity-75">Your journey to perfect fitting starts here</p>
+    </div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">For Customers <i class="bi bi-person-fill text-primary"></i></h2>
+            </div>
+
+            <div class="row g-4 mt-2">
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/customer-step1.html">
+                        <div class="card-box">
+                            <span class="number-badge">01</span>
+                            <i class="bi bi-calendar-check step-icon"></i>
+                            <h5>Book Tailor</h5>
+                            <p>Browse expert tailors and book your slot with just a few clicks.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/customer-step2.html">
+                        <div class="card-box">
+                            <span class="number-badge">02</span>
+                            <i class="bi bi-rulers step-icon"></i>
+                            <h5>Add Measurements</h5>
+                            <p>Upload your size or choose from saved profiles for a perfect fit.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/customer-step3.html">
+                        <div class="card-box">
+                            <span class="number-badge">03</span>
+                            <i class="bi bi-clock-history step-icon"></i>
+                            <h5>Track Order</h5>
+                            <p>Get real-time updates as your outfit moves through stitching.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/customer-step4.html">
+                        <div class="card-box">
+                            <span class="number-badge">04</span>
+                            <i class="bi bi-truck step-icon"></i>
+                            <h5>Get Delivery</h5>
+                            <p>Doorstep delivery of your freshly stitched premium clothes.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5" style="background-color: #f4f1ee;">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title">For Tailors <i class="bi bi-scissors text-danger"></i></h2>
+            </div>
+
+            <div class="row g-4 mt-2">
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/tailor-step1.html">
+                        <div class="card-box">
+                            <span class="number-badge">01</span>
+                            <i class="bi bi-inbox-fill step-icon"></i>
+                            <h5>Receive Order</h5>
+                            <p>Access new stitching requests instantly on your dashboard.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/tailor-step2.html">
+                        <div class="card-box">
+                            <span class="number-badge">02</span>
+                            <i class="bi bi-eye step-icon"></i>
+                            <h5>Check Details</h5>
+                            <p>View detailed measurements and specific customer designs.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/tailor-step3.html">
+                        <div class="card-box">
+                            <span class="number-badge">03</span>
+                            <i class="bi bi-gem step-icon"></i>
+                            <h5>Start Stitching</h5>
+                            <p>Craft high-quality garments according to given specifications.</p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <a href="howworks/tailor-step4.html">
+                        <div class="card-box">
+                            <span class="number-badge">04</span>
+                            <i class="bi bi-patch-check step-icon"></i>
+                            <h5>Update Status</h5>
+                            <p>Mark stages as complete to keep the customer informed.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

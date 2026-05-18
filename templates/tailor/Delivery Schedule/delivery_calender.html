@@ -1,0 +1,76 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <h3 class="fw-bold">Delivery Calendar 📅</h3>
+    <p class="text-muted">{{ month_name }} {{ current_year }}</p>
+  </div>
+  <div class="col-md-6 text-md-right">
+    <a href="?month={{ prev_month }}&year={{ prev_year }}" class="btn btn-light">&laquo; Previous</a>
+    <a href="?month={{ next_month }}&year={{ next_year }}" class="btn btn-light">Next &raquo;</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for week in calendar_days %}
+          <tr style="height: 100px;">
+            {% for day in week %}
+            <td style="vertical-align: top; {% if day.is_today %}background-color: #e8f5e9;{% endif %}">
+              {% if day.date %}
+                <strong>{{ day.date }}</strong>
+                {% for order in day.orders %}
+                  <div class="mt-1 p-1 rounded 
+                    {% if order.priority == 'Urgent' %}bg-danger text-white
+                    {% elif order.priority == 'High' %}bg-warning text-dark
+                    {% else %}bg-light{% endif %}"
+                    style="font-size: 11px;">
+                    <a href="{% url 'tailor:order_detail' order.id %}" 
+                       class="text-decoration-none {% if order.priority == 'Urgent' %}text-white{% endif %}">
+                      #{{ order.order_number|truncatechars:8 }}
+                    </a>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <span class="text-muted">-</span>
+              {% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media print {
+    .navbar, .sidebar, .footer, .btn, form {
+      display: none !important;
+    }
+    .main-panel {
+      width: 100% !important;
+      margin: 0 !important;
+    }
+  }
+</style>
+
+{% endblock %}

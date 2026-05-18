@@ -1,0 +1,83 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-8 grid-margin stretch-card">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white">
+        <h4 class="mb-0"><i class="mdi mdi-account-plus"></i> Add New Customer</h4>
+      </div>
+      <div class="card-body">
+        
+        <form method="POST" id="customerForm">
+          {% csrf_token %}
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>First Name <span class="text-danger">*</span></label>
+              <input type="text" name="first_name" class="form-control" required>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label>Last Name</label>
+              <input type="text" name="last_name" class="form-control">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Phone Number <span class="text-danger">*</span></label>
+              <input type="text" name="phone_number" id="phone" class="form-control" required>
+              <small id="phoneError" class="text-danger"></small>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label>Email Address</label>
+              <input type="email" name="email" class="form-control">
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label>Address</label>
+            <textarea name="address" class="form-control" rows="3" placeholder="Full address"></textarea>
+          </div>
+          
+          <div class="mb-3">
+            <label>Additional Notes</label>
+            <textarea name="notes" class="form-control" rows="2" placeholder="Any special notes about this customer"></textarea>
+          </div>
+          
+          <div class="mt-4">
+            <button type="submit" class="btn btn-success">
+              <i class="mdi mdi-check"></i> Save Customer
+            </button>
+            <a href="{% url 'tailor:view_customers' %}" class="btn btn-light">Cancel</a>
+          </div>
+          
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Phone validation
+  document.getElementById('phone')?.addEventListener('input', function() {
+    let phone = this.value;
+    let error = document.getElementById('phoneError');
+    let phoneRegex = /^[6-9]\d{9}$/;
+    
+    if (phone && !phoneRegex.test(phone)) {
+      error.innerText = 'Enter valid 10-digit phone number';
+      this.style.borderColor = 'red';
+    } else {
+      error.innerText = '';
+      this.style.borderColor = '';
+    }
+  });
+</script>
+
+{% endblock %}

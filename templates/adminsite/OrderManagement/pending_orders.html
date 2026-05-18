@@ -1,0 +1,116 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-12">
+
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-0 fw-bold text-warning">Pending Orders</h4>
+            <small class="text-muted">Orders waiting for approval or assignment</small>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Tailor</th>
+                <th>Pending Time</th>
+                <th>Priority</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for order in orders %}
+              <tr>
+
+                <!-- ORDER ID -->
+                <td><strong>#ORD-{{ order.id }}</strong></td>
+
+                <!-- CUSTOMER -->
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img src="{% static 'admin/images/faces/face1.jpg' %}" class="avatar me-2">
+                    <div>
+                      <div class="fw-semibold">{{ order.customer.first_name }} {{ order.customer.last_name }}</div>
+                      <small class="text-muted">{{ order.customer.email }}</small>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- TAILOR -->
+                <td>
+                  {% if order.tailor %}
+                    {{ order.tailor.name }}
+                  {% else %}
+                    <span class="text-muted">Unassigned</span>
+                  {% endif %}
+                </td>
+
+                <!-- PENDING DAYS -->
+                <td>
+                  <strong class="text-danger">
+                    {{ order.pending_duration }} days
+                  </strong>
+                </td>
+
+                <!-- PRIORITY -->
+                <td>
+                  {% if order.pending_duration > 5 %}
+                    <span class="badge-priority">High</span>
+                  {% else %}
+                    <span class="badge-normal">Normal</span>
+                  {% endif %}
+                </td>
+
+                <!-- ACTIONS -->
+                <td class="text-center">
+
+                  <!-- APPROVE -->
+                  <a href="{% url 'adminsite:approve_order' order.id %}"
+                     class="btn btn-sm btn-success"
+                     onclick="return confirm('Approve this order?')">
+                    <i class="mdi mdi-check"></i>
+                  </a>
+
+                  <!-- ASSIGN -->
+                  <a href="{% url 'adminsite:assign_tailor' order.id %}"
+                     class="btn btn-sm btn-outline-primary">
+                    <i class="mdi mdi-account-plus"></i>
+                  </a>
+
+                </td>
+
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  🚫 No pending orders
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

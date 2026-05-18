@@ -1,0 +1,144 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.card-custom {
+  border-radius: 14px;
+  border: none;
+}
+
+.table thead th {
+  background: #111827;
+  color: #fff;
+  font-size: 13px;
+}
+
+.rank-badge {
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 50px;
+}
+
+.rank-1 { background: gold; color: #000; }
+.rank-2 { background: silver; color: #000; }
+.rank-3 { background: #cd7f32; color: #fff; }
+
+.progress {
+  height: 8px;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  border-radius: 10px;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+</style>
+
+<div class="row">
+  <div class="col-lg-12">
+
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between mb-3">
+          <div>
+            <h4 class="fw-bold mb-0">Tailor Efficiency Leaderboard</h4>
+            <small class="text-muted">Performance ranking based on completed orders</small>
+          </div>
+
+          <a href="{% url 'adminsite:tailor_reports' %}" class="btn btn-outline-dark btn-sm">
+            <i class="mdi mdi-download"></i> Export
+          </a>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tailor</th>
+                <th>Tasks</th>
+                <th>Completed</th>
+                <th>Success %</th>
+                <th>Rating</th>
+                <th width="200">Performance</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for tailor in tailor_stats %}
+              <tr>
+
+                <!-- RANK -->
+                <td>
+                  {% if forloop.counter == 1 %}
+                    <span class="rank-badge rank-1">1</span>
+                  {% elif forloop.counter == 2 %}
+                    <span class="rank-badge rank-2">2</span>
+                  {% elif forloop.counter == 3 %}
+                    <span class="rank-badge rank-3">3</span>
+                  {% else %}
+                    {{ forloop.counter }}
+                  {% endif %}
+                </td>
+
+                <!-- NAME -->
+                <td>
+                  <strong>{{ tailor.name }}</strong>
+                </td>
+
+                <!-- TASKS -->
+                <td>{{ tailor.tasks }}</td>
+
+                <!-- COMPLETED -->
+                <td class="text-success fw-bold">{{ tailor.done }}</td>
+
+                <!-- SUCCESS % -->
+                <td>
+                  {{ tailor.success_rate }}%
+                </td>
+
+                <!-- RATING -->
+                <td>
+                  <i class="mdi mdi-star text-warning"></i>
+                  {{ tailor.rating|floatformat:1 }}
+                </td>
+
+                <!-- PROGRESS -->
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar bg-info"
+                         style="color: aqua;"
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center text-muted">
+                  No performance data available
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %} 

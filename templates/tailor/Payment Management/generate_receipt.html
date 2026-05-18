@@ -1,0 +1,141 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-10 mx-auto">
+
+    <!-- ===================== RECEIPT ===================== -->
+    <div class="card shadow-sm" id="printableArea">
+      <div class="card-body p-5">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h2 class="text-primary font-weight-bold">
+              {{ user.shop_name|default:"Tailor Shop" }}
+            </h2>
+            <p class="mb-1">{{ user.shop_address|linebreaksbr }}</p>
+            <p class="mb-0">📞 {{ user.phone_number }}</p>
+          </div>
+
+          <div class="text-end">
+            <h3 class="font-weight-bold">RECEIPT</h3>
+            <p class="mb-0">Txn ID: <strong>#TXN-{{ payment.id }}</strong></p>
+            <p class="mb-0 text-muted">{{ payment.created_at|date:"d M Y" }}</p>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- CUSTOMER INFO -->
+        <div class="row my-4">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Received From:</strong></p>
+            <p class="mb-0">{{ payment.order.customer.get_full_name }}</p>
+          </div>
+
+          <div class="col-md-6 text-md-end">
+            <p class="mb-1"><strong>Order Details:</strong></p>
+            <p class="mb-0">
+              #ORD-{{ payment.order.id }} <br>
+              <small class="text-muted">{{ payment.order.garment_type }}</small>
+            </p>
+          </div>
+        </div>
+
+        <!-- PAYMENT DETAILS -->
+        <div class="mb-4">
+          <p class="mb-1"><strong>Payment Method:</strong> {{ payment.method }}</p>
+          <p class="mb-1">
+            <strong>Status:</strong>
+            {% if payment.status == 'Success' %}
+              <span class="badge bg-success">Paid</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </p>
+        </div>
+
+        <!-- TABLE -->
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Description</th>
+              <th class="text-end">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Custom Tailoring Service</td>
+              <td class="text-end">₹{{ payment.amount }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th class="text-end">Total</th>
+              <th class="text-end text-success">₹{{ payment.amount }}</th>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- FOOTER -->
+        <div class="mt-5 d-flex justify-content-between">
+          <div>
+            <p class="text-muted small">
+              Thank you for your business 🙏
+            </p>
+          </div>
+
+          <div class="text-end">
+            <p>______________________</p>
+            <p class="mb-0">Authorized Signature</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="mt-3 text-center d-print-none">
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="mdi mdi-printer"></i> Print Receipt
+      </button>
+
+      <a href="{% url 'tailor:payment_history' %}" class="btn btn-light">
+        Back
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===================== PRINT STYLE ===================== -->
+<style>
+@media print {
+
+  body {
+    background: #fff !important;
+  }
+
+  .navbar, .sidebar, .footer, .d-print-none {
+    display: none !important;
+  }
+
+  .main-panel, .content-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  #printableArea {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+}
+</style>
+
+{% endblock %}

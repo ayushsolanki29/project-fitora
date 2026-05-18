@@ -1,0 +1,178 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.profile-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.profile-img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+}
+.info-box {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+</style>
+
+<div class="row">
+
+  <!-- 🔹 LEFT PROFILE -->
+  <div class="col-md-4">
+    <div class="card profile-card shadow-sm text-center p-4">
+
+      {% if customer.profile_pic %}
+        <img src="{{ customer.profile_pic.url }}" class="rounded-circle profile-img mx-auto mb-3">
+      {% else %}
+        <img src="{% static 'admin/images/faces/face1.jpg' %}" class="rounded-circle profile-img mx-auto mb-3">
+      {% endif %}
+
+      <h4 class="mb-1">{{ customer.first_name }} {{ customer.last_name }}</h4>
+
+      <p class="text-muted mb-2">
+        Member since {{ customer.date_joined|date:"M Y" }}
+      </p>
+
+      <!-- STATUS -->
+      {% if customer.is_active %}
+        <span class="badge bg-success mb-3">Active</span>
+      {% else %}
+        <span class="badge bg-danger mb-3">Blocked</span>
+      {% endif %}
+
+      <!-- ACTIONS -->
+      <div class="d-grid gap-2">
+        <a href="mailto:{{ customer.email }}" class="btn btn-outline-primary btn-sm">
+          <i class="mdi mdi-email"></i> Send Email
+        </a>
+
+        <a href="{% url 'adminsite:customer_order_history'}"
+           class="btn btn-sm 
+           {% if customer.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+           
+           {% if customer.is_active %}
+             Block Account
+           {% else %}
+             Activate Account
+           {% endif %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 🔹 RIGHT DETAILS -->
+  <div class="col-md-8">
+    <div class="card shadow-sm p-4">
+
+      <h4 class="mb-3">Customer Details</h4>
+
+      <div class="row">
+
+        <div class="col-md-6">
+          <div class="info-box">
+            <strong>Email</strong><br>
+            {{ customer.email }}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="info-box">
+            <strong>Phone</strong><br>
+            {{ customer.phone|default:"N/A" }}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="info-box">
+            <strong>Address</strong><br>
+            {{ customer.address|default:"Not provided" }}
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="info-box">
+            <strong>Last Login</strong><br>
+            {{ customer.last_login|date:"d M Y, H:i" }}
+          </div>
+        </div>
+
+      </div>
+
+      <hr>
+
+      <!-- 🔥 QUICK ACTIONS -->
+      <div class="d-flex gap-2">
+
+        <a href="{% url 'adminsite:customer_order_history'}"
+           class="btn btn-dark btn-sm">
+           <i class="mdi mdi-history"></i> Order History
+        </a>
+
+        <a href="{% url 'adminsite:view_all_customers' %}" 
+           class="btn btn-light btn-sm">
+           Back
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- {% load static %}
+
+<div class="row">
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body text-center">
+        <img src="{{ customer.profile_pic.url|default:'/static/admin/images/faces/face1.jpg' }}" class="img-lg rounded-circle mb-3" alt="profile">
+        <h4>{{ customer.get_full_name }}</h4>
+        <p class="text-muted">Member Since: {{ customer.date_joined|date:"M Y" }}</p>
+        <button class="btn btn-primary btn-sm mt-3">Send Message</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Detailed Information</h4>
+        <div class="row">
+          <div class="col-sm-6"><p><strong>Email:</strong> {{ customer.email }}</p></div>
+          <div class="col-sm-6"><p><strong>Phone:</strong> {{ customer.phone|default:"N/A" }}</p></div>
+          <div class="col-sm-6"><p><strong>Address:</strong> {{ customer.address|default:"No address set" }}</p></div>
+          <div class="col-sm-6"><p><strong>Last Login:</strong> {{ customer.last_login }}</p></div>
+        </div>
+        <hr>
+        <div class="template-demo">
+          <a href="{% url 'adminsite:customer_order_history' %}" class="btn btn-outline-dark btn-fw">View Order History</a>
+          <button type="button" class="btn btn-outline-danger btn-fw">Deactivate Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

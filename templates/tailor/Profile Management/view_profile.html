@@ -1,0 +1,128 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <!-- Left: Profile Card -->
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        
+        <div class="mb-3">
+          {% if tailor.profile_pic %}
+            <img src="{{ tailor.profile_pic.url }}" class="rounded-circle shadow" style="width:120px;height:120px;object-fit:cover;">
+          {% else %}
+            <img src="{% static 'admin/images/faces/face1.jpg' %}" class="rounded-circle shadow" style="width:120px;height:120px;object-fit:cover;">
+          {% endif %}
+        </div>
+        
+        <h4 class="mb-1">{{ tailor.get_full_name|default:tailor.username }}</h4>
+        <p class="text-muted mb-2">{{ tailor.specialty|default:"Professional Tailor" }}</p>
+        
+        <div class="mb-2">
+          <i class="mdi mdi-star text-warning"></i>
+          <i class="mdi mdi-star text-warning"></i>
+          <i class="mdi mdi-star text-warning"></i>
+          <i class="mdi mdi-star text-warning"></i>
+          <i class="mdi mdi-star-outline text-muted"></i>
+          <small class="text-muted">(4.0 Rating)</small>
+        </div>
+        
+        <span class="badge bg-success px-3 py-2">Verified Tailor</span>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right: Details -->
+  <div class="col-md-8 grid-margin stretch-card">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        
+        <h4 class="card-title mb-4">Profile Details</h4>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Full Name</label>
+            <p class="fw-bold">{{ tailor.get_full_name|default:"Not Provided" }}</p>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Email</label>
+            <p class="fw-bold">{{ tailor.email }}</p>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Mobile</label>
+            <p class="fw-bold">{{ tailor.mobile|default:"Not Provided" }}</p>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Experience</label>
+            <p class="fw-bold">{{ tailor.years_of_experience|default:"0" }} Years</p>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Specialization</label>
+            <p class="fw-bold">{{ tailor.specialty|default:"Not Specified" }}</p>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="text-muted small">Member Since</label>
+            <p class="fw-bold">{{ tailor.created_at|date:"M Y" }}</p>
+          </div>
+        </div>
+        
+        <hr>
+        
+        <div class="mb-3">
+          <label class="text-muted small">About Me</label>
+          <p>{{ tailor.bio|default:"No bio added yet." }}</p>
+        </div>
+        
+        <div class="mt-4">
+          <a href="{% url 'tailor:edit_profile' %}" class="btn btn-primary">
+            <i class="mdi mdi-pencil"></i> Edit Profile
+          </a>
+          <a href="{% url 'tailor:shop_details' %}" class="btn btn-outline-info">
+            <i class="mdi mdi-store"></i> Shop Details
+          </a>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row mt-4">
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card text-center bg-primary text-white">
+      <div class="card-body">
+        <h6>Total Orders</h6>
+        <h2>{{ total_orders }}</h2>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card text-center bg-success text-white">
+      <div class="card-body">
+        <h6>Completed Orders</h6>
+        <h2>{{ completed_orders }}</h2>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card text-center bg-warning text-white">
+      <div class="card-body">
+        <h6>Pending Orders</h6>
+        <h2>{{ pending_orders }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

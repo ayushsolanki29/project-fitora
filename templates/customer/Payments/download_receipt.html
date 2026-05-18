@@ -1,0 +1,117 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.receipt-card {
+    max-width: 800px;
+    margin: auto;
+}
+.receipt-header {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+}
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .receipt-card {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    body {
+        background: white;
+    }
+}
+</style>
+
+<div class="receipt-card">
+    <div class="card shadow-sm" id="receiptArea">
+        <div class="card-body p-4">
+            
+            <!-- Header -->
+            <div class="receipt-header d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h2 class="text-primary mb-0">Fitora</h2>
+                    <small>Premium Tailoring Services</small>
+                    <p class="mt-2 mb-0">
+                        Ahmedabad, India<br>
+                        support@fitora.com
+                    </p>
+                </div>
+                <div class="text-end">
+                    <h4 class="text-success">PAID</h4>
+                    <p class="mb-0"><strong>Receipt #:</strong> {{ payment.transaction_id|truncatechars:15 }}</p>
+                    <p class="mb-0"><strong>Date:</strong> {{ payment.created_at|date:"d M Y" }}</p>
+                </div>
+            </div>
+            
+            <!-- Bill To -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted">Bill To:</h6>
+                    <p>
+                        <strong>{{ customer.get_full_name|default:customer.username }}</strong><br>
+                        {{ customer.email }}<br>
+                        {{ customer.mobile }}
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h6 class="text-muted">Order Details:</h6>
+                    <p>
+                        <strong>Order #:</strong> {{ payment.order.order_number }}<br>
+                        <strong>Garment:</strong> {{ payment.order.garment_type }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Payment Details -->
+            <div class="mb-4">
+                <h6 class="text-muted">Payment Details:</h6>
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width: 50%;">Description</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                    <tr>
+                        <td>Custom Tailoring Service (Order #{{ payment.order.order_number }})</td>
+                        <td class="text-end">₹{{ payment.amount|floatformat:2 }}</td>
+                    </tr>
+                    <tr class="table-active">
+                        <th class="text-end">Total Paid</th>
+                        <th class="text-end text-success">₹{{ payment.amount|floatformat:2 }}</th>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Payment Method -->
+            <div class="mb-4">
+                <p><strong>Payment Method:</strong> {{ payment.payment_method }}</p>
+                <p><strong>Transaction ID:</strong> {{ payment.transaction_id }}</p>
+                <p><strong>Status:</strong> 
+                    <span class="badge bg-success">Success</span>
+                </p>
+            </div>
+            
+            <!-- Footer -->
+            <div class="text-center text-muted mt-4 pt-3 border-top">
+                <small>Thank you for choosing Fitora! This is a computer-generated receipt.</small>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="text-center mt-4 no-print">
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="mdi mdi-printer"></i> Print Receipt
+        </button>
+        <a href="{% url 'customer:payment_history' %}" class="btn btn-light">
+            Back to History
+        </a>
+    </div>
+</div>
+
+{% endblock %}

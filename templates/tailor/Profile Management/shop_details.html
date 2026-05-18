@@ -1,0 +1,126 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-10 grid-margin stretch-card">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+
+        <h4 class="card-title mb-2">Manage Your Shop</h4>
+        <p class="text-muted mb-4">
+          This information will be visible to customers browsing your profile.
+        </p>
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="row">
+
+            <!-- LEFT SIDE -->
+            <div class="col-md-6">
+
+              <!-- SHOP NAME -->
+              <div class="form-group mb-3">
+                <label>Shop Name</label>
+                <input type="text" class="form-control"
+                       name="shop_name"
+                       value="{{ user.shop_name }}"
+                       placeholder="e.g. Royal Tailors" required>
+              </div>
+
+              <!-- ADDRESS -->
+              <div class="form-group mb-3">
+                <label>Shop Address</label>
+                <textarea class="form-control"
+                          name="shop_address"
+                          rows="3"
+                          placeholder="Enter full address...">{{ user.shop_address }}</textarea>
+              </div>
+
+              <!-- CITY -->
+              <div class="form-group mb-3">
+                <label>City</label>
+                <input type="text" class="form-control"
+                       name="city"
+                       value="{{ user.city }}"
+                       placeholder="e.g. Ahmedabad">
+              </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="col-md-6">
+
+              <!-- TIMING -->
+              <div class="form-group mb-3">
+                <label>Opening Time</label>
+                <input type="time" class="form-control"
+                       name="opening_time"
+                       value="{{ user.opening_time|time:'H:i' }}">
+              </div>
+
+              <div class="form-group mb-3">
+                <label>Closing Time</label>
+                <input type="time" class="form-control"
+                       name="closing_time"
+                       value="{{ user.closing_time|time:'H:i' }}">
+              </div>
+
+              <!-- WORKING DAYS -->
+              <div class="form-group mb-3">
+                <label>Working Days</label>
+                <select class="form-control" name="working_days">
+                  <option value="Mon-Sat" {% if user.working_days == "Mon-Sat" %}selected{% endif %}>Monday - Saturday</option>
+                  <option value="All Days" {% if user.working_days == "All Days" %}selected{% endif %}>All Days</option>
+                  <option value="Custom" {% if user.working_days == "Custom" %}selected{% endif %}>Custom</option>
+                </select>
+              </div>
+
+              <!-- STATUS -->
+              <div class="form-group mb-3">
+                <label>Shop Status</label>
+                <select class="form-control" name="is_open">
+                  <option value="1" {% if user.is_open %}selected{% endif %}>Open</option>
+                  <option value="0" {% if not user.is_open %}selected{% endif %}>Closed</option>
+                </select>
+              </div>
+
+            </div>
+
+          </div>
+
+          <hr>
+
+          <!-- LIVE PREVIEW -->
+          <div class="bg-light p-3 rounded mb-4">
+            <h6 class="text-muted">Preview</h6>
+            <h5 class="mb-1">{{ user.shop_name|default:"Your Shop Name" }}</h5>
+            <p class="mb-1 text-muted">{{ user.shop_address|default:"Shop address will appear here" }}</p>
+            <small class="text-success">
+              ⏰ {{ user.opening_time|time:'H:i' }} - {{ user.closing_time|time:'H:i' }}
+            </small>
+          </div>
+
+          <!-- BUTTONS -->
+          <div class="d-flex justify-content-between">
+
+            <a href="#" class="btn btn-light">
+              Cancel
+            </a>
+
+            <button type="submit" class="btn btn-success btn-icon-text">
+              <i class="mdi mdi-content-save"></i> Save Changes
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

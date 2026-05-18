@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .container {
+            width: 360px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .otp-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .otp-box input {
+            width: 45px;
+            height: 50px;
+            font-size: 20px;
+            text-align: center;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .otp-box input:focus {
+            outline: none;
+            border-color: #ff7e5f;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #ff7e5f;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #e56a4f;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .link {
+            margin-top: 15px;
+            display: block;
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            color: #ff7e5f;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Enter OTP</h2>
+    <p class="sub-text">Enter the 6-digit OTP sent to your email</p>
+
+    <form method="POST" onsubmit="combineOTP()">
+        {% csrf_token %}
+
+        <!-- OTP Inputs -->
+        <div class="otp-box">
+            <input type="text" maxlength="1" oninput="moveNext(this,1)">
+            <input type="text" maxlength="1" oninput="moveNext(this,2)">
+            <input type="text" maxlength="1" oninput="moveNext(this,3)">
+            <input type="text" maxlength="1" oninput="moveNext(this,4)">
+            <input type="text" maxlength="1" oninput="moveNext(this,5)">
+            <input type="text" maxlength="1" oninput="moveNext(this,6)">
+        </div>
+
+        <!-- Hidden OTP -->
+        <input type="hidden" name="otp" id="otp">
+
+        <button type="submit" class="btn">Verify OTP</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <a href="{% url 'adminsite:forgot_password' %}" class="link">Resend OTP</a>
+</div>
+
+<script>
+function moveNext(current, index) {
+    if (current.value.length === 1) {
+        const next = current.parentElement.children[index];
+        if (next) next.focus();
+    }
+}
+
+function combineOTP() {
+    let otp = "";
+    document.querySelectorAll('.otp-box input').forEach(input => {
+        otp += input.value;
+    });
+    document.getElementById('otp').value = otp;
+}
+</script>
+
+</body>
+</html>

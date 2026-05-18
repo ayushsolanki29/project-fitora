@@ -1,0 +1,36 @@
+{% extends 'tailor/base.html' %}
+{% block content %}
+<div class="card border-left border-danger">
+  <div class="card-body">
+    <h4 class="card-title text-danger">Cancelled Order Log</h4>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Reason</th>
+            <th>Refunded?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.customer.get_full_name }}</td>
+            <td>{{ order.cancellation_reason|default:"Customer Request" }}</td>
+            <td>
+              {% if order.is_refunded %}
+                <i class="mdi mdi-check-circle text-success"></i> Yes
+              {% else %}
+                <i class="mdi mdi-close-circle text-muted"></i> N/A
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

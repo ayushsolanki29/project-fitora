@@ -1,0 +1,161 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h3 class="fw-bold">My Orders</h3>
+    <p class="text-muted">Track all your tailoring orders</p>
+  </div>
+  <div class="col-md-4 text-md-right">
+    <a href="#" class="btn btn-primary">
+      <i class="mdi mdi-plus"></i> Place New Order
+    </a>
+  </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h6>Total Orders</h6>
+        <h3>{{ total_orders }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card bg-warning text-white">
+      <div class="card-body">
+        <h6>Pending</h6>
+        <h3>{{ pending_orders }}</h3>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h6>Delivered</h6>
+        <h3>{{ completed_orders }}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" class="row g-2">
+      <div class="col-md-5">
+        <input type="text" name="search" value="{{ request.GET.search }}" class="form-control" placeholder="Search by tailor name...">
+      </div>
+      <div class="col-md-3">
+        <select name="status" class="form-control">
+          <option value="">All Status</option>
+          <option value="Pending" {% if request.GET.status == "Pending" %}selected{% endif %}>Pending</option>
+          <option value="Confirmed" {% if request.GET.status == "Confirmed" %}selected{% endif %}>Confirmed</option>
+          <option value="Cutting" {% if request.GET.status == "Cutting" %}selected{% endif %}>Cutting</option>
+          <option value="Stitching" {% if request.GET.status == "Stitching" %}selected{% endif %}>Stitching</option>
+          <option value="Ready" {% if request.GET.status == "Ready" %}selected{% endif %}>Ready</option>
+          <option value="Delivered" {% if request.GET.status == "Delivered" %}selected{% endif %}>Delivered</option>
+          <option value="Cancelled" {% if request.GET.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-dark w-100">Filter</button>
+      </div>
+      <div class="col-md-2">
+        <a href="{% url 'customer:view_all_orders' %}" class="btn btn-light w-100">Reset</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Order ID</th>
+            <th>Tailor</th>
+            <th>Garment</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Delivery Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in page_obj %}
+          <tr>
+            <td><strong>#{{ order.order_number|truncatechars:12 }}</strong></td>
+            <td>{{ order.tailor_name|default:"Not Assigned" }}</td>
+            <td>{{ order.garment_type }}</td>
+            <td>₹{{ order.amount|floatformat:2 }}</td>
+            <td>
+              {% if order.status == 'Pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% elif order.status == 'Confirmed' %}
+                <span class="badge bg-info">Confirmed</span>
+              {% elif order.status == 'Cutting' %}
+                <span class="badge bg-primary">Cutting</span>
+              {% elif order.status == 'Stitching' %}
+                <span class="badge bg-primary">Stitching</span>
+              {% elif order.status == 'Ready' %}
+                <span class="badge bg-info">Ready</span>
+              {% elif order.status == 'Delivered' %}
+                <span class="badge bg-success">Delivered</span>
+              {% elif order.status == 'Cancelled' %}
+                <span class="badge bg-danger">Cancelled</span>
+              {% else %}
+                <span class="badge bg-secondary">{{ order.status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ order.delivery_date|date:"d M Y"|default:"-" }}</td>
+            <td>
+              <a href="{% url 'customer:order_details' order.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="mdi mdi-eye"></i> View
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-4">
+              <i class="mdi mdi-inbox mdi-36px text-muted"></i>
+              <p class="mt-2">No orders found</p>
+              <a href="#" class="btn btn-sm btn-primary">Place Your First Order</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-4 d-flex justify-content-between">
+      <div class="text-muted">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</div>
+      <nav>
+        <ul class="pagination mb-0">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Prev</a></li>
+          {% endif %}
+          <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+
+{% endblock %}

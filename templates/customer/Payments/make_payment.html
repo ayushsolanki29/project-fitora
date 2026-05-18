@@ -1,0 +1,94 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-7 grid-margin stretch-card">
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <h4 class="card-title mb-3">Make Payment</h4>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        {% if unpaid_orders %}
+        <form method="POST" id="paymentForm">
+          {% csrf_token %}
+          <input type="hidden" name="action" id="payAction" value="stripe">
+
+          <div class="form-group mb-3">
+            <label>Select Order</label>
+            <select class="form-control" name="order_id" id="orderSelect" required>
+              <option value="">Choose an order...</option>
+              {% for order in unpaid_orders %}
+              <option value="{{ order.id }}" data-amount="{{ order.balance_due }}">
+                Order #{{ order.order_number|truncatechars:12 }} — Balance: ₹{{ order.balance_due|floatformat:2 }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Amount (₹)</label>
+            <input type="number" name="amount" id="amount" class="form-control" step="0.01" required>
+          </div>
+
+          {% if stripe_enabled %}
+          <button type="submit" class="btn btn-primary w-100 mt-2" onclick="document.getElementById('payAction').value='stripe'">
+            <i class="mdi mdi-credit-card"></i> Pay with Stripe (Card)
+          </button>
+          <p class="text-muted text-center small mt-2">Secure payment powered by Stripe</p>
+          {% else %}
+          <div class="alert alert-warning">Stripe is not configured. Add keys to .env file.</div>
+          {% endif %}
+
+          <hr>
+          <p class="text-muted small">Paying cash at the tailor shop?</p>
+          <input type="hidden" name="method" value="Cash">
+          <button type="submit" class="btn btn-outline-secondary w-100" onclick="document.getElementById('payAction').value='cash'">
+            Record Cash Payment
+          </button>
+        </form>
+        {% else %}
+        <div class="alert alert-info">No pending orders to pay. <a href="{% url 'website:book_tailor' %}">Book a tailor</a></div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-5 grid-margin stretch-card">
+    <div class="card bg-light border-0 shadow-sm">
+      <div class="card-body text-center">
+        <h4>Secure Stripe Payment</h4>
+        <i class="mdi mdi-credit-card-multiple text-primary" style="font-size: 80px;"></i>
+        <p class="mt-3 text-muted">Pay safely with Visa, Mastercard, and more via Stripe</p>
+        <ul class="list-unstyled text-start mt-4">
+          <li>✔ PCI-DSS compliant</li>
+          <li>✔ Instant confirmation</li>
+          <li>✔ Receipt in payment history</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('orderSelect')?.addEventListener('change', function() {
+  let amount = this.options[this.selectedIndex].dataset.amount || 0;
+  document.getElementById('amount').value = amount;
+});
+// Pre-select first order
+const sel = document.getElementById('orderSelect');
+if (sel && sel.options.length > 1) {
+  sel.selectedIndex = 1;
+  sel.dispatchEvent(new Event('change'));
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'tailor/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ===================== HEADER ===================== -->
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h2 class="font-weight-bold">Welcome back, {{ request.user.first_name }} 👋</h2>
+    <p class="text-muted">Manage your tailoring business efficiently</p>
+  </div>
+  <div class="col-md-4 text-md-right">
+    <a href="{% url 'tailor:add_payments' %}" class="btn btn-primary">
+      <i class="mdi mdi-plus"></i> New Order
+    </a>
+  </div>
+</div>
+
+<!-- ===================== STATS ===================== -->
+<div class="row">
+
+  <div class="col-md-3 grid-margin">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h6>Total Orders</h6>
+        <h2>{{ total_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin">
+    <div class="card bg-warning text-white">
+      <div class="card-body">
+        <h6>Pending Orders</h6>
+        <h2>{{ pending_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h6>Completed</h6>
+        <h2>{{ completed_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 grid-margin">
+    <div class="card bg-dark text-white">
+      <div class="card-body">
+        <h6>Total Earnings</h6>
+        <h2>₹{{ total_earnings }}</h2>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== PROGRESS ===================== -->
+<div class="row">
+  <div class="col-md-6 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h5>Work Progress</h5>
+
+        <p class="mb-1">Pending Orders</p>
+        <div class="progress mb-3">
+          <div class="progress-bar bg-warning" style="height: auto;"></div>
+        </div>
+
+        <p class="mb-1">Completed Orders</p>
+        <div class="progress">
+          <div class="progress-bar bg-success" style="border: 0ch;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== QUICK ACTION ===================== -->
+  <div class="col-md-6 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h5>Quick Actions</h5>
+
+        <a href="#" class="btn btn-outline-primary btn-block mb-2">
+          View All Orders
+        </a>
+
+        <a href="#" class="btn btn-outline-info btn-block mb-2">
+          My Customers
+        </a>
+
+        <a href="#" class="btn btn-outline-success btn-block">
+          Payment History
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== RECENT ORDERS ===================== -->
+<div class="row">
+  <div class="col-md-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Recent Orders</h4>
+
+        <div class="table-responsive">
+          <table class="table table-hover">
+
+            <thead>
+              <tr>
+                <th>#ID</th>
+                <th>Customer</th>
+                <th>Garment</th>
+                <th>Deadline</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for order in recent_orders %}
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.customer.get_full_name }}</td>
+                <td>{{ order.garment_type }}</td>
+
+                <td class="text-danger">
+                  {{ order.delivery_date|date:"d M" }}
+                </td>
+
+                <td>
+                  <label class="badge
+                    {% if order.status == 'Pending' %}badge-warning
+                    {% elif order.status == 'Completed' %}badge-success
+                    {% else %}badge-info{% endif %}">
+                    {{ order.status }}
+                  </label>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center">No recent orders</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

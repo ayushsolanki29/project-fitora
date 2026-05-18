@@ -1,0 +1,192 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.card-custom {
+  border-radius: 14px;
+  border: none;
+}
+
+.kpi-card {
+  padding: 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: white;
+}
+
+.kpi-title {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.kpi-value {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.table thead th {
+  background: #111827;
+  color: #fff;
+  font-size: 13px;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+canvas {
+  max-height: 300px;
+}
+</style>
+
+<!-- 🔷 KPI CARDS -->
+<div class="row mb-4">
+
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card shadow-sm card-custom">
+      <div class="card-body kpi-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="kpi-title">Total Revenue</div>
+            <div class="kpi-value">₹{{ total_revenue }}</div>
+          </div>
+          <i class="mdi mdi-cash-multiple mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card shadow-sm card-custom">
+      <div class="card-body kpi-card" style="background: linear-gradient(135deg,#7c2d12,#dc2626)">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="kpi-title">Total Refunds</div>
+            <div class="kpi-value">₹{{ total_refunds }}</div>
+          </div>
+          <i class="mdi mdi-cash-refund mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 grid-margin stretch-card">
+    <div class="card shadow-sm card-custom">
+      <div class="card-body kpi-card" style="background: linear-gradient(135deg,#065f46,#16a34a)">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="kpi-title">Net Profit</div>
+            <div class="kpi-value">₹{{ net_profit }}</div>
+          </div>
+          <i class="mdi mdi-chart-line mdi-36px"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 📊 REVENUE TREND -->
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+        <h5 class="mb-3">Revenue Trend</h5>
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 📋 TABLE -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card shadow-sm card-custom">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between mb-3">
+          <h5 class="mb-0">Revenue Breakdown</h5>
+          <a href="{% url 'adminsite:payment_reports' %}" class="btn btn-outline-dark btn-sm">
+            <i class="mdi mdi-download"></i> Export
+          </a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Invoices</th>
+                <th class="text-end">Gross</th>
+                <th class="text-end">Fees</th>
+                <th class="text-end">Net</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for report in payment_data %}
+              <tr>
+                <td>{{ report.date }}</td>
+                <td>{{ report.count }}</td>
+
+                <td class="text-end text-success">
+                  ₹{{ report.gross|floatformat:2 }}
+                </td>
+
+                <td class="text-end text-danger">
+                  -₹{{ report.fees|floatformat:2 }}
+                </td>
+
+                <td class="text-end fw-bold">
+                  ₹{{ report.net|floatformat:2 }}
+                </td>
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  No revenue data available
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 📊 CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- <script>
+const ctx = document.getElementById('revenueChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            label: 'Revenue',
+            data: {{ chart_data|safe }},
+            borderColor: '#16a34a',
+            tension: 0.3,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        }
+    }
+});
+</script> -->
+
+{% endblock %}

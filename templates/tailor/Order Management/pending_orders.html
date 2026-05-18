@@ -1,0 +1,105 @@
+{% extends 'tailor/base.html' %}
+{% block content %}
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <h3 class="fw-bold">Welcome, {{ user.first_name }}</h3>
+    <p class="text-muted">Here’s what's happening with your orders</p>
+  </div>
+</div>
+
+<div class="row">
+
+  <!-- Total Orders -->
+  <div class="col-md-3 grid-margin">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h6 class="text-muted">Total Orders</h6>
+        <h2 class="fw-bold">{{ total_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending -->
+  <div class="col-md-3 grid-margin">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h6 class="text-warning">Pending</h6>
+        <h2 class="fw-bold">{{ pending_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completed -->
+  <div class="col-md-3 grid-margin">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h6 class="text-success">Completed</h6>
+        <h2 class="fw-bold">{{ completed_orders }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Spend -->
+  <div class="col-md-3 grid-margin">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center">
+        <h6 class="text-primary">Total Spent</h6>
+        <h2 class="fw-bold">₹{{ total_spent }}</h2>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Recent Orders -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3">Recent Orders</h5>
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tailor</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_orders %}
+            <tr>
+              <td>#ORD-{{ order.id }}</td>
+              <td>{{ order.tailor.name }}</td>
+
+              <td>
+                <span class="badge 
+                  {% if order.status == 'Pending' %}bg-warning
+                  {% elif order.status == 'Completed' %}bg-success
+                  {% else %}bg-info{% endif %}">
+                  {{ order.status }}
+                </span>
+              </td>
+
+              <td>₹{{ order.total_amount }}</td>
+
+              <td>
+                <a href="{% url 'tailor:order_details' order.id %}" 
+                   class="btn btn-sm btn-outline-primary">
+                   View
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

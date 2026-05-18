@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Fitora - Customer Panel</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'admin/vendors/mdi/css/materialdesignicons.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'admin/vendors/base/vendor.bundle.base.css' %}" />
+  <link rel="stylesheet" href="{% static 'admin/vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}" />
+  <link rel="stylesheet" href="{% static 'admin/css/style.css' %}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="{% static 'admin/images/favicon.png' %}" />
+
+  <style>
+    .alert {
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-left-color: #28a745;
+    }
+
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border-left-color: #dc3545;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      color: #856404;
+      border-left-color: #ffc107;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border-left-color: #17a2b8;
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background: #28a745;
+      color: white;
+    }
+
+    .badge-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .badge-warning {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .badge-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .badge-primary {
+      background: #007bff;
+      color: white;
+    }
+
+    .table-responsive {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table thead th {
+      background: #1a1a2e;
+      color: white;
+      font-weight: 600;
+      font-size: 13px;
+      border: none;
+      padding: 12px 15px;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .btn {
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .card {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar .nav .nav-item .nav-link {
+      padding: 12px 20px;
+    }
+
+    .sidebar .nav .nav-item.active .nav-link {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+    }
+
+    .content-wrapper {
+      background: #f5f7fb;
+    }
+
+    .stat-card {
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller">
+
+    <!-- Top Navbar -->
+    <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="navbar-brand-wrapper d-flex justify-content-center">
+        <div class="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">
+          <a class="navbar-brand brand-logo" href="{% url 'customer:customer_dashboard' %}">
+            <h4 style="color: white; margin: 0;">👔 Fitora</h4>
+          </a>
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-sort-variant"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <ul class="navbar-nav mr-lg-4 w-100">
+          <li class="nav-item nav-search d-none d-lg-block w-100">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="search">
+                  <i class="mdi mdi-magnify"></i>
+                </span>
+              </div>
+              <input type="text" class="form-control" placeholder="Search orders..." id="globalSearch" />
+            </div>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
+              {% if user.is_authenticated and user.customer.profile_pic %}
+              <img src="{{ user.customer.profile_pic.url }}" alt="profile" />
+              {% else %}
+              <img src="{% static 'admin/images/faces/face1.jpg' %}" alt="profile" />
+              {% endif %}
+
+              <span class="nav-profile-name">
+                {{ user.first_name|default:user.username }}
+              </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item" href="{% url 'customer:view_profile' %}">
+                <i class="mdi mdi-account text-primary"></i> My Profile
+              </a>
+              <a class="dropdown-item" href="{% url 'customer:edit_personal_details' %}">
+                <i class="mdi mdi-pencil text-info"></i> Edit Profile
+              </a>
+              <a class="dropdown-item" href="{% url 'customer:change_password' %}">
+                <i class="mdi mdi-lock-reset text-warning"></i> Change Password
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'customer:logout' %}">
+                <i class="mdi mdi-logout text-danger"></i> Logout
+              </a>
+            </div>
+          </li>
+        </ul>
+
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container-fluid page-body-wrapper">
+
+      <!-- Sidebar -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'customer:customer_dashboard' %}">
+              <i class="mdi mdi-home menu-icon"></i>
+              <span class="menu-title">Dashboard</span>
+            </a>
+          </li>
+
+          <!-- My Profile -->
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#profileMenu" aria-expanded="false">
+              <i class="mdi mdi-account-circle menu-icon"></i>
+              <span class="menu-title">My Profile</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="profileMenu">
+              <ul class="nav flex-column sub-menu">
+                <li><a class="nav-link" href="{% url 'customer:view_profile' %}">👤 View Profile</a></li>
+                <li><a class="nav-link" href="{% url 'customer:edit_personal_details' %}">✏️ Edit Profile</a></li>
+                <li><a class="nav-link" href="{% url 'customer:change_password' %}">🔐 Change Password</a></li>
+                <li><a class="nav-link" href="{% url 'customer:address_information' %}">📍 Address</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- My Orders -->
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ordersMenu" aria-expanded="false">
+              <i class="mdi mdi-cart menu-icon"></i>
+              <span class="menu-title">My Orders</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ordersMenu">
+              <ul class="nav flex-column sub-menu">
+                <li><a class="nav-link" href="{% url 'customer:view_all_orders' %}">📦 All Orders</a></li>
+                <li><a class="nav-link" href="{% url 'customer:previous_orders' %}">📜 Order History</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <!-- Payments -->
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#paymentMenu" aria-expanded="false">
+              <i class="mdi mdi-cash-multiple menu-icon"></i>
+              <span class="menu-title">Payments</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="paymentMenu">
+              <ul class="nav flex-column sub-menu">
+                <li><a class="nav-link" href="{% url 'customer:make_payment' %}">💰 Make Payment</a></li>
+                <li><a class="nav-link" href="{% url 'customer:payment_history' %}">📋 Payment History</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'customer:logout' %}">
+              <i class="mdi mdi-logout menu-icon"></i>
+              <span class="menu-title">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Panel -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+
+          <!-- Messages -->
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            <i class="mdi mdi-information-outline"></i>
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+          {% endif %}
+
+          <!-- Page Content -->
+          {% block content %}
+          {% endblock %}
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+              Copyright © Fitora Tailoring 2024
+            </span>
+          </div>
+        </footer>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="{% static 'admin/vendors/base/vendor.bundle.base.js' %}"></script>
+  <script src="{% static 'admin/vendors/chart.js/Chart.min.js' %}"></script>
+  <script src="{% static 'admin/vendors/datatables.net/jquery.dataTables.js' %}"></script>
+  <script src="{% static 'admin/vendors/datatables.net-bs4/dataTables.bootstrap4.js' %}"></script>
+  <script src="{% static 'admin/js/off-canvas.js' %}"></script>
+  <script src="{% static 'admin/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'admin/js/template.js' %}"></script>
+  <script src="{% static 'admin/js/dashboard.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Global search
+    document.getElementById('globalSearch')?.addEventListener('keyup', function (e) {
+      let searchText = e.target.value.toLowerCase();
+      let tableRows = document.querySelectorAll('table tbody tr');
+      tableRows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+      });
+    });
+
+    // Auto-hide alerts
+    setTimeout(function () {
+      let alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        if (alert) {
+          alert.style.transition = 'opacity 0.5s';
+          alert.style.opacity = '0';
+          setTimeout(() => { if (alert) alert.remove(); }, 500);
+        }
+      });
+    }, 4000);
+  </script>
+
+  {% block extra_js %}{% endblock %}
+  {% include 'includes/fitora_chatbot.html' %}
+</body>
+
+</html>

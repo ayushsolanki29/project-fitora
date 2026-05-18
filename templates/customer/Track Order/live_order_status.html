@@ -1,0 +1,153 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.live-container {
+    max-width: 1000px;
+    margin: auto;
+}
+.live-card {
+    border-radius: 16px;
+}
+.status-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+}
+.update-card {
+    border-left: 4px solid #28a745;
+}
+</style>
+
+<div class="live-container">
+    <div class="card shadow-sm live-card">
+        <div class="card-body">
+            
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-0">Live Order Status</h4>
+                    <small class="text-muted">Real-time updates for your order</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary fs-6">#{{ order.order_number|truncatechars:12 }}</span>
+                    <div class="mt-1">
+                        <span class="badge 
+                            {% if order.status == 'Delivered' %}bg-success
+                            {% elif order.status == 'Pending' %}bg-warning
+                            {% else %}bg-info{% endif %} fs-6">
+                            {{ order.status }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Card -->
+            <div class="status-card mb-4 text-center">
+                <i class="mdi mdi-package-variant mdi-48px"></i>
+                <h3 class="mt-2 mb-0">{{ order.progress_percentage }}% Complete</h3>
+                <p class="mb-0 opacity-75">
+                    {% if order.status == 'Pending' %}
+                        Your order has been placed successfully!
+                    {% elif order.status == 'Confirmed' %}
+                        Your order has been confirmed by the tailor.
+                    {% elif order.status == 'Cutting' %}
+                        Fabric cutting is in progress.
+                    {% elif order.status == 'Stitching' %}
+                        Your garment is being stitched.
+                    {% elif order.status == 'Ready' %}
+                        Your order is ready for delivery!
+                    {% elif order.status == 'Delivered' %}
+                        Your order has been delivered. Thank you for choosing us!
+                    {% endif %}
+                </p>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Order Progress</span>
+                    <span>{{ order.progress_percentage }}%</span>
+                </div>
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: {{ order.progress_percentage }}%;">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Updates Timeline -->
+            <h6 class="mb-3">Recent Updates</h6>
+            
+            <div class="update-card p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Order Placed</strong>
+                    <small class="text-muted">{{ order.created_at|date:"d M Y, H:i A" }}</small>
+                </div>
+                <p class="mb-0 text-muted">Your order has been successfully placed.</p>
+            </div>
+            
+            {% if order.status != 'Pending' %}
+            <div class="update-card p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Order Confirmed</strong>
+                    <small class="text-muted">{{ order.updated_at|date:"d M Y"|default:"Processing" }}</small>
+                </div>
+                <p class="mb-0 text-muted">Tailor has confirmed your order.</p>
+            </div>
+            {% endif %}
+            
+            {% if order.status == 'Delivered' %}
+            <div class="update-card p-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <strong>Order Delivered</strong>
+                    <small class="text-muted">{{ order.updated_at|date:"d M Y, H:i A" }}</small>
+                </div>
+                <p class="mb-0 text-muted">Your order has been delivered successfully!</p>
+            </div>
+            {% endif %}
+            
+            <!-- Estimated Delivery -->
+            <div class="mt-4 p-3 bg-light rounded">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="mdi mdi-truck-fast text-primary mdi-24px"></i>
+                        <strong>Estimated Delivery</strong>
+                    </div>
+                    <div>
+                        {% if order.delivery_date %}
+                            <span class="fw-bold">{{ order.delivery_date|date:"d M Y" }}</span>
+                            <br>
+                            <small class="text-muted">{{ order.delivery_date|timeuntil }} remaining</small>
+                        {% else %}
+                            <span class="text-muted">To be announced</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Refresh Button -->
+            <div class="mt-4 text-center">
+                <button onclick="location.reload()" class="btn btn-primary">
+                    <i class="mdi mdi-refresh"></i> Refresh Status
+                </button>
+                <a href="{% url 'customer:order_details' order.id %}" class="btn btn-outline-secondary">
+                    <i class="mdi mdi-eye"></i> Full Details
+                </a>
+            </div>
+            
+            <!-- Auto Refresh Script -->
+            <script>
+                setTimeout(function() {
+                    location.reload();
+                }, 30000); // Refresh every 30 seconds
+            </script>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

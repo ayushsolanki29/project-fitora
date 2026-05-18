@@ -1,0 +1,126 @@
+{% extends 'adminsite/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow border-0">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Add New Tailor</h4>
+      </div>
+      <div class="card-body">
+        
+        <form method="POST" enctype="multipart/form-data" id="tailorForm">
+          {% csrf_token %}
+          
+          <!-- Name -->
+          <div class="form-group mb-3">
+            <label for="id_name">Full Name <span class="text-danger">*</span></label>
+            {{ form.name }}
+            {% if form.name.errors %}
+              <small class="text-danger">{{ form.name.errors }}</small>
+            {% endif %}
+          </div>
+          
+          <!-- Email and Phone Row -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="id_email">Email Address <span class="text-danger">*</span></label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <small class="text-danger">{{ form.email.errors }}</small>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="id_phone">Phone Number</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}
+                <small class="text-danger">{{ form.phone.errors }}</small>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- Specialty and Experience Row -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="id_specialty">Specialization <span class="text-danger">*</span></label>
+              {{ form.specialty }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="id_experience_years">Experience (Years)</label>
+              {{ form.experience_years }}
+            </div>
+          </div>
+          
+          <!-- Profile Picture -->
+          <div class="form-group mb-3">
+            <label for="id_profile_pic">Profile Picture</label>
+            {{ form.profile_pic }}
+            <div class="mt-3 text-center">
+              <img id="previewImage" src="{% static 'admin/images/faces/face1.jpg' %}" 
+                   class="rounded-circle shadow" width="100" height="100" style="object-fit: cover;">
+            </div>
+          </div>
+          
+          <!-- Address -->
+          <div class="form-group mb-3">
+            <label for="id_address">Address</label>
+            {{ form.address }}
+          </div>
+          
+          <!-- Active Status -->
+          <div class="form-group mb-4">
+            <div class="form-check">
+              {{ form.is_active }}
+              <label class="form-check-label" for="id_is_active">
+                Active Status
+              </label>
+            </div>
+          </div>
+          
+          <!-- Buttons -->
+          <div class="d-flex gap-2">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
+              <i class="mdi mdi-check"></i> Save Tailor
+            </button>
+            <a href="{% url 'adminsite:view_all_tailors' %}" class="btn btn-light">
+              <i class="mdi mdi-cancel"></i> Cancel
+            </a>
+          </div>
+          
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Image preview
+  document.getElementById("id_profile_pic")?.addEventListener("change", function(e) {
+    const [file] = e.target.files;
+    if (file) {
+      document.getElementById("previewImage").src = URL.createObjectURL(file);
+    }
+  });
+  
+  // Phone validation
+  document.getElementById("id_phone")?.addEventListener("input", function() {
+    let phone = this.value;
+    if (phone && !/^[0-9]{10}$/.test(phone)) {
+      this.setCustomValidity("Enter valid 10-digit phone number");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+  
+  // Form submit button loading
+  document.getElementById("tailorForm")?.addEventListener("submit", function() {
+    let btn = document.getElementById("submitBtn");
+    btn.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i> Saving...';
+    btn.disabled = true;
+  });
+</script>
+
+{% endblock %}

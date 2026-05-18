@@ -1,0 +1,199 @@
+{% extends 'customer/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.tracking-container {
+    max-width: 1000px;
+    margin: auto;
+}
+.step {
+    text-align: center;
+    flex: 1;
+    position: relative;
+}
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    font-size: 22px;
+}
+.step.active .step-icon {
+    background: #007bff;
+    color: white;
+}
+.step.completed .step-icon {
+    background: #28a745;
+    color: white;
+}
+.step p {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.progress-line {
+    position: absolute;
+    top: 25px;
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    background: #e9ecef;
+    z-index: 0;
+}
+.progress-fill {
+    height: 3px;
+    background: #28a745;
+    transition: width 0.5s ease;
+}
+.timeline-item {
+    border-left: 3px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="tracking-container">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4>Order Status Tracking</h4>
+                <span class="badge bg-primary">#{{ order.order_number|truncatechars:12 }}</span>
+            </div>
+            
+            <!-- Progress Steps -->
+            <div class="position-relative mb-5">
+                <div class="progress-line">
+                    <div class="progress-fill" style="width: {{ order.progress_percentage }}%;"></div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <div class="step {% if order.progress_percentage >= 10 %}completed{% elif order.status == 'Pending' %}active{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-cart-outline"></i>
+                        </div>
+                        <p>Order<br>Placed</p>
+                    </div>
+                    
+                    <div class="step {% if order.progress_percentage >= 25 %}completed{% elif order.status == 'Confirmed' %}active{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-check-circle"></i>
+                        </div>
+                        <p>Order<br>Confirmed</p>
+                    </div>
+                    
+                    <div class="step {% if order.progress_percentage >= 50 %}completed{% elif order.status == 'Cutting' %}active{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-content-cut"></i>
+                        </div>
+                        <p>Fabric<br>Cutting</p>
+                    </div>
+                    
+                    <div class="step {% if order.progress_percentage >= 75 %}completed{% elif order.status == 'Stitching' %}active{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-tshirt-crew"></i>
+                        </div>
+                        <p>Stitching<br>Progress</p>
+                    </div>
+                    
+                    <div class="step {% if order.progress_percentage >= 90 %}completed{% elif order.status == 'Ready' %}active{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-package-variant"></i>
+                        </div>
+                        <p>Ready for<br>Delivery</p>
+                    </div>
+                    
+                    <div class="step {% if order.progress_percentage == 100 %}completed{% endif %}">
+                        <div class="step-icon">
+                            <i class="mdi mdi-truck"></i>
+                        </div>
+                        <p>Delivered</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Status -->
+            <div class="alert alert-info">
+                <strong>Current Status:</strong> 
+                {% if order.status == 'Pending' %}
+                    Your order has been placed and is waiting for confirmation.
+                {% elif order.status == 'Confirmed' %}
+                    Your order has been confirmed and will be processed soon.
+                {% elif order.status == 'Cutting' %}
+                    Fabric cutting is in progress.
+                {% elif order.status == 'Stitching' %}
+                    Your garment is being stitched.
+                {% elif order.status == 'Ready' %}
+                    Your order is ready for delivery.
+                {% elif order.status == 'Delivered' %}
+                    Your order has been delivered successfully!
+                {% endif %}
+            </div>
+            
+            <!-- Timeline -->
+            <div class="mt-4">
+                <h6 class="mb-3">Order Timeline</h6>
+                
+                <div class="timeline-item">
+                    <strong>Order Placed</strong>
+                    <br>
+                    <small class="text-muted">{{ order.created_at|date:"d M Y, H:i A" }}</small>
+                </div>
+                
+                {% if order.status != 'Pending' %}
+                <div class="timeline-item">
+                    <strong>Order Confirmed</strong>
+                    <br>
+                    <small class="text-muted">Order confirmed by tailor</small>
+                </div>
+                {% endif %}
+                
+                {% if order.status in 'Cutting,Stitching,Ready,Delivered' %}
+                <div class="timeline-item">
+                    <strong>Cutting Started</strong>
+                    <br>
+                    <small class="text-muted">Fabric cutting in progress</small>
+                </div>
+                {% endif %}
+                
+                {% if order.status in 'Stitching,Ready,Delivered' %}
+                <div class="timeline-item">
+                    <strong>Stitching Started</strong>
+                    <br>
+                    <small class="text-muted">Garment stitching in progress</small>
+                </div>
+                {% endif %}
+                
+                {% if order.status == 'Delivered' %}
+                <div class="timeline-item">
+                    <strong>Order Delivered</strong>
+                    <br>
+                    <small class="text-muted">{{ order.updated_at|date:"d M Y, H:i A" }}</small>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="mt-4 d-flex gap-2">
+                <a href="{% url 'customer:order_details' order.id %}" class="btn btn-outline-primary">
+                    <i class="mdi mdi-eye"></i> Order Details
+                </a>
+                <a href="{% url 'customer:delivery_date_information' order.id %}" class="btn btn-outline-info">
+                    <i class="mdi mdi-calendar"></i> Delivery Info
+                </a>
+                <a href="{% url 'customer:view_all_orders' %}" class="btn btn-light">
+                    Back
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

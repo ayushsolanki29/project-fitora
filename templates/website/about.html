@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>About - FITORA</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* HERO */
+        .about-hero {
+            height: 60vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('https://setufairtrade.com/wp-content/uploads/2022/11/tailoring.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* ABOUT */
+        .about-section {
+            padding: 60px 0;
+        }
+
+        .about-img {
+            border-radius: 15px;
+        }
+
+        .about-text h2 {
+            font-weight: bold;
+        }
+
+        .highlight {
+            color: #c49a6c;
+        }
+
+        .features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        /* STATS */
+        .stats {
+            background: #222;
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        .stat-box h2 {
+            color: #c49a6c;
+        }
+
+        /* TEAM */
+        .team {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .team-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-card img {
+            width: 120px;
+            border-radius: 50%;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, #c49a6c, #a67c52);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .cta button {
+            background: white;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{% url 'website:index' %}">FITORA</a>
+
+            <!-- Toggle -->
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' or request.path == '/index/' %}active{% endif %}"
+                            href="{% url 'website:index' %}">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'about' in request.path %}active{% endif %}"
+                            href="{% url 'website:about' %}">About</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'how-it-works' in request.path %}active{% endif %}"
+                            href="{% url 'website:how_it_works' %}">How It Works</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'services' in request.path %}active{% endif %}"
+                            href="{% url 'website:services' %}">Services</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'tailors' in request.path %}active{% endif %}"
+                            href="{% url 'website:tailors' %}">Tailors</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'pricing' in request.path %}active{% endif %}"
+                            href="{% url 'website:pricing' %}">Pricing</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'track-order' in request.path %}active{% endif %}"
+                            href="{% url 'website:track_order' %}">Track Order</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'contact' in request.path %}active{% endif %}"
+                            href="{% url 'website:contact' %}">Contact</a>
+                    </li>
+                </ul>
+
+                <!-- CTA Button -->
+                <a href="{% url 'website:book_tailor' %}">
+                    <button class="btn-custom">Book Tailor</button>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- HERO -->
+    <section class="about-hero">
+        <div>
+            <h1>About FITORA</h1>
+            <p>Your Digital Tailoring Partner</p>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-section">
+        <div class="container">
+            <div class="row align-items-center">
+
+                <div class="col-md-6">
+                    <img src="https://setufairtrade.com/wp-content/uploads/2022/11/tailoring.jpg"
+                        class="img-fluid about-img">
+                </div>
+
+                <div class="col-md-6 about-text">
+                    <h2>We Are <span class="highlight">FITORA</span></h2>
+
+                    <p>
+                        FITORA is a modern tailoring platform that connects customers with expert tailors.
+                        We simplify the entire stitching process using digital technology.
+                    </p>
+
+                    <p>
+                        From booking to delivery, everything is managed in one place.
+                        No more confusion, no more delays — just smart tailoring.
+                    </p>
+
+                    <ul class="features">
+                        <li>✔ Easy Booking</li>
+                        <li>✔ Measurement Storage</li>
+                        <li>✔ Live Tracking</li>
+                        <li>✔ Fast Delivery</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- STATS -->
+    <section class="stats">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-4 stat-box">
+                    <h2>500+</h2>
+                    <p>Happy Customers</p>
+                </div>
+
+                <div class="col-md-4 stat-box">
+                    <h2>100+</h2>
+                    <p>Expert Tailors</p>
+                </div>
+
+                <div class="col-md-4 stat-box">
+                    <h2>1000+</h2>
+                    <p>Orders Completed</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="team">
+        <div class="container">
+
+            <h2 class="mb-5">Our Team</h2>
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <img
+                            src="https://www.creativehatti.com/wp-content/uploads/2021/11/Tailor-is-sewing-a-cloth-on-a-machine-13-small.jpg">
+                        <h5 class="mt-3">Master Tailor</h5>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <img
+                            src="https://img.freepik.com/free-vector/fashion-designer-woman-holding-clipboard_23-2148823175.jpg">
+                        <h5 class="mt-3">Designer</h5>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="team-card">
+                        <img
+                            src="https://img.freepik.com/premium-vector/call-center-operator-vector-illustration-customer-online-support-manager-woman-working-headphones-with-microphone-customer-support-office-cartoon-flat-concept-web-banner-landing-page_311563-515.jpg">
+                        <h5 class="mt-3">Support Manager</h5>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2>Start Your Tailoring Journey Today</h2>
+        <button onclick="window.location.href='services.html'">Explore Services</button>
+    </section>
+
+    {% include 'includes/fitora_chatbot.html' %}
+
+</body>
+
+</html>
