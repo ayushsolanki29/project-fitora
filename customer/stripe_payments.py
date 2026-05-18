@@ -11,6 +11,18 @@ from .models import Customer, CustomerOrder, CustomerPayment
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+def _stripe_value(obj, key, default=None):
+    """Read a field from a Stripe object (dict-like access, not .get())."""
+    if obj is None:
+        return default
+    if isinstance(obj, dict):
+        return obj.get(key, default)
+    try:
+        return obj[key]
+    except (KeyError, TypeError):
+        return getattr(obj, key, default)
+
+
 def create_stripe_checkout(request, order_id, amount):
     """Create Stripe Checkout Session and redirect to payment page."""
     customer_id = request.session.get('customer_id')
@@ -86,18 +98,28 @@ def handle_stripe_success(request):
         messages.error(request, 'Could not verify payment. Contact support.')
         return redirect('customer:make_payment')
 
-    if session.payment_status != 'paid':
+    payment_status = _stripe_value(session, 'payment_status')
+    if payment_status != 'paid':
         messages.warning(request, 'Payment was not completed.')
         return redirect('customer:make_payment')
 
-    order_id = session.metadata.get('order_id')
+    order_id = _stripe_value(_stripe_value(session, 'metadata'), 'order_id')
+    if not order_id:
+        messages.error(request, 'Payment verified but order information is missing. Contact support.')
+        return redirect('customer:make_payment')
+
     order = get_object_or_404(CustomerOrder, id=order_id, customer=customer)
 
     if CustomerPayment.objects.filter(transaction_id=session_id).exists():
         messages.info(request, 'Payment already recorded.')
         return redirect('customer:payment_history')
 
-    amount_paid = Decimal(session.amount_total) / 100
+    amount_total = _stripe_value(session, 'amount_total')
+    if amount_total is None:
+        messages.error(request, 'Could not determine payment amount. Contact support.')
+        return redirect('customer:make_payment')
+
+    amount_paid = Decimal(amount_total) / 100
 
     payment = CustomerPayment.objects.create(
         customer=customer,
